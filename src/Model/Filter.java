@@ -20,10 +20,10 @@ public class Filter extends RecursiveAction {
 
     @Override
     protected void compute() {
-        if ((endX - startX)*(endY - startY) <= threshold) {
+        if (endX - startX <= threshold) {
             System.out.println("Computing area: " + startX + ", " + endX + " , " + startY + ", " + endY);
-            for (int y = 0; y < (endY-startY); y++) {
-                for (int x = 0; x < (endX - startX); x++) {
+            for (int y = startY; y < endY; y++) {
+                for (int x = startX; x < endX; x++) {
                     int p = img.getRGB(x, y);
                     int a = (p >> 24) & 0xff;
                     int r = (p >> 16) & 0xff;
@@ -43,11 +43,11 @@ public class Filter extends RecursiveAction {
 
                 }
             }
+
         }
         else{
             int middleX = (startX+endX)/2;
             invokeAll(new Filter(img, startX, middleX, startY, endY, threshold), new Filter(img, middleX, endX, startY, endY, threshold));
-
         }
 
     }
