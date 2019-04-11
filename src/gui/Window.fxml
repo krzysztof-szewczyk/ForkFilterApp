@@ -16,23 +16,23 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="567.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.WindowController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="567.0" style="-fx-background-color: #001f3f;" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.WindowController">
    <children>
       <VBox prefHeight="400.0" prefWidth="567.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox alignment="CENTER" prefHeight="56.0" prefWidth="567.0">
                <children>
-                  <TextField prefHeight="25.0" prefWidth="239.0">
+                  <TextField fx:id="loadTxt" prefHeight="25.0" prefWidth="239.0" style="-fx-background-color: #d1d1e0;">
                      <HBox.margin>
                         <Insets bottom="10.0" left="10.0" top="10.0" />
                      </HBox.margin>
                   </TextField>
-                  <Button id="loadBtn" fx:id="loadBtn" mnemonicParsing="false" text="Load">
+                  <Button id="loadBtn" fx:id="loadBtn" mnemonicParsing="false" style="-fx-background-color: #1a75ff;" text="Load" textFill="#c5c5c5">
                      <HBox.margin>
                         <Insets bottom="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
                   </Button>
-                  <ChoiceBox prefWidth="150.0">
+                  <ChoiceBox fx:id="filterChoiceBox" prefWidth="150.0">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
                      </cursor>
@@ -48,22 +48,21 @@
                      <children>
                         <HBox prefHeight="17.0" prefWidth="249.0">
                            <children>
-                              <Label text="Create custom filter:">
+                              <Label text="Create custom filter" textFill="#c5c5c5">
                                  <HBox.margin>
                                     <Insets right="10.0" />
                                  </HBox.margin>
                               </Label>
-                              <TextField prefHeight="25.0" prefWidth="27.0" />
                            </children>
                         </HBox>
-                        <HBox prefHeight="17.0" prefWidth="249.0">
+                        <HBox alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="249.0">
                            <children>
-                              <Label text="Size:">
+                              <Label text="Size:" textFill="#c5c5c5">
                                  <HBox.margin>
                                     <Insets right="10.0" />
                                  </HBox.margin>
                               </Label>
-                              <TextField prefHeight="25.0" prefWidth="27.0" />
+                              <TextField fx:id="newFilterSizeTxt" prefHeight="25.0" prefWidth="27.0" style="-fx-background-color: #d1d1e0;" />
                            </children>
                         </HBox>
                      </children>
@@ -71,7 +70,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
                   </VBox>
-                  <GridPane id="matrix" fx:id="matrixGridPane" alignment="BOTTOM_RIGHT" gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="75.0">
+                  <GridPane id="matrix" fx:id="matrixGridPane" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="87.0" prefWidth="87.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -83,73 +82,73 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0">
+                        <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #d1d1e0;">
                            <GridPane.margin>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </GridPane.margin>
                            <font>
                               <Font size="10.0" />
                            </font>
                         </TextField>
-                        <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" GridPane.columnIndex="1">
+                        <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #d1d1e0;" GridPane.columnIndex="1">
                            <GridPane.margin>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </GridPane.margin>
                            <font>
                               <Font size="10.0" />
                            </font>
                         </TextField>
-                        <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" GridPane.columnIndex="2">
+                        <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #d1d1e0;" GridPane.columnIndex="2">
                            <GridPane.margin>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </GridPane.margin>
                            <font>
                               <Font size="10.0" />
                            </font>
                         </TextField>
-                        <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" GridPane.rowIndex="1">
+                        <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #d1d1e0;" GridPane.rowIndex="1">
                            <GridPane.margin>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </GridPane.margin>
                            <font>
                               <Font size="10.0" />
                            </font>
                         </TextField>
-                        <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #d1d1e0;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <GridPane.margin>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </GridPane.margin>
                            <font>
                               <Font size="10.0" />
                            </font>
                         </TextField>
-                        <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #d1d1e0;" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <GridPane.margin>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </GridPane.margin>
                            <font>
                               <Font size="10.0" />
                            </font>
                         </TextField>
-                        <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" GridPane.rowIndex="2">
+                        <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #d1d1e0;" GridPane.rowIndex="2">
                            <GridPane.margin>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </GridPane.margin>
                            <font>
                               <Font size="10.0" />
                            </font>
                         </TextField>
-                        <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #d1d1e0;" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <GridPane.margin>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </GridPane.margin>
                            <font>
                               <Font size="10.0" />
                            </font>
                         </TextField>
-                        <TextField maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                        <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #d1d1e0;" GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <GridPane.margin>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </GridPane.margin>
                            <font>
                               <Font size="10.0" />
@@ -164,25 +163,45 @@
             </HBox>
             <HBox prefHeight="256.0" prefWidth="294.0">
                <children>
-                  <HBox prefHeight="100.0" prefWidth="200.0" />
-                  <HBox prefHeight="256.0" prefWidth="387.0">
+                  <HBox prefHeight="235.0" prefWidth="376.0">
                      <children>
-                        <ImageView fitHeight="256.0" fitWidth="151.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="file:/C:/Users/Ozii/Desktop/projects/ImageFilteringFJ/resources/strawberry.jpg" />
-                           </image>
+                        <VBox prefHeight="109.0" prefWidth="216.0">
+                           <children>
+                              <Label text="Thresold:" textFill="#c5c5c5" />
+                              <Label text="Processing time:" textFill="#c5c5c5" />
+                              <Label text="Parallelism level:" textFill="#c5c5c5" />
+                              <Label text="Size:" textFill="#c5c5c5" />
+                           </children>
                            <HBox.margin>
-                              <Insets right="10.0" />
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </HBox.margin>
-                        </ImageView>
-                        <ImageView fitHeight="256.0" fitWidth="151.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="file:/C:/Users/Ozii/Desktop/projects/ImageFilteringFJ/resources/strawberry.jpg" />
-                           </image>
+                        </VBox>
+                     </children></HBox>
+                  <HBox prefHeight="205.0" prefWidth="234.0">
+                     <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Label text="Original:" textFill="#c5c5c5" />
+                              <ImageView fitHeight="314.0" fitWidth="108.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="file:/C:/Users/Ozii/Desktop/projects/ImageFilteringFJ/resources/strawberry.jpg" />
+                                 </image>
+                              </ImageView>
+                           </children>
                            <HBox.margin>
-                              <Insets right="10.0" />
+                              <Insets right="50.0" />
                            </HBox.margin>
-                        </ImageView>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Label text="Filtered:" textFill="#c5c5c5" />
+                              <ImageView fitHeight="214.0" fitWidth="194.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="file:/C:/Users/Ozii/Desktop/projects/ImageFilteringFJ/resources/strawberry.jpg" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </VBox>
                      </children>
                   </HBox>
                </children>
