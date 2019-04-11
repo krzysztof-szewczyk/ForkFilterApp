@@ -8,10 +8,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.util.List;
 
 
 public class WindowController {
@@ -34,6 +38,7 @@ public class WindowController {
 
     @FXML
     private Label sizeLabel;
+
 
     @FXML
     public void initialize(){
@@ -104,6 +109,21 @@ public class WindowController {
         else {
             matrixGridPane.setDisable(false);
             newFilterSizeTxt.setDisable(false);
+        }
+    }
+
+    @FXML
+    public void openFileChooser(){
+        FileChooser fc = new FileChooser();
+        fc.setInitialDirectory(new File("C:\\Users\\Ozii\\Desktop"));
+        fc.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png")
+        );
+        File selectedFile = fc.showOpenDialog(null);
+
+        if(selectedFile != null) {
+            originalImage.setImage(new Image(selectedFile.toURI().toString()));
         }
     }
 }

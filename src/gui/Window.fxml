@@ -27,7 +27,7 @@
                         <Insets bottom="10.0" left="10.0" top="10.0" />
                      </HBox.margin>
                   </TextField>
-                  <Button fx:id="loadBtn" mnemonicParsing="false" style="-fx-background-color: #1a75ff;" text="Load" textFill="#c5c5c5">
+                  <Button fx:id="loadBtn" mnemonicParsing="false" onMouseClicked="#openFileChooser" style="-fx-background-color: #1a75ff;" text="Load" textFill="#c5c5c5">
                      <HBox.margin>
                         <Insets bottom="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
