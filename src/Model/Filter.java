@@ -5,9 +5,9 @@ import java.util.concurrent.RecursiveAction;
 
 public class Filter extends RecursiveAction {
 
-    int threshold;
-    int startX, endX, startY, endY;
-    BufferedImage img;
+    private int threshold;
+    private int startX, endX, startY, endY;
+    private BufferedImage img;
 
     public Filter(BufferedImage im, int xs, int xe, int ys, int ye, int t) {
         img = im;
@@ -21,7 +21,7 @@ public class Filter extends RecursiveAction {
     @Override
     protected void compute() {
         if (endX - startX <= threshold) {
-            System.out.println("Computing area: " + startX + ", " + endX + " , " + startY + ", " + endY);
+//            System.out.println("Computing area: " + startX + ", " + endX + " , " + startY + ", " + endY);
             for (int y = startY; y < endY; y++) {
                 for (int x = startX; x < endX; x++) {
                     int p = img.getRGB(x, y);

@@ -1,5 +1,7 @@
 package Controller;
 
+import Model.Filter;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -12,8 +14,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 
@@ -37,7 +41,16 @@ public class WindowController {
     private ImageView originalImage;
 
     @FXML
+    private ImageView filteredImage;
+
+    @FXML
     private Label sizeLabel;
+
+    @FXML
+    private TextField thresholdLabel;
+
+    @FXML
+    private Label processingTimeLabel;
 
 
     @FXML
@@ -49,9 +62,6 @@ public class WindowController {
         filterChoiceBox.getSelectionModel().selectFirst();
         filterChoiceBox.setOnAction(this::toggleMatrixEnable);
         sizeLabel.setText("Size: " + (int) originalImage.getImage().getWidth() + "x" + (int) originalImage.getImage().getHeight() + "px");
-        System.out.println(originalImage.getImage().getHeight());
-        System.out.println(originalImage.getImage().getWidth());
-
     }
 
     @FXML
@@ -125,5 +135,15 @@ public class WindowController {
         if(selectedFile != null) {
             originalImage.setImage(new Image(selectedFile.toURI().toString()));
         }
+    }
+
+    public void filter(){
+        BufferedImage bi = SwingFXUtils.fromFXImage(originalImage.getImage(),null);
+        Filter task = new Filter(bi, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdLabel.getText()));
+        long beginT = System.nanoTime();
+        task.invoke();
+        long endT = System.nanoTime();
+        processingTimeLabel.setText("Processing time: "+(endT-beginT)/1000000+"ms");
+        filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
     }
 }
