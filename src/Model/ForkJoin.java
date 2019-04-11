@@ -1,7 +1,7 @@
 package Model;
 
-
 import View.FileChooser;
+import Controller.FilterManager;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -9,16 +9,17 @@ import java.io.IOException;
 import java.util.concurrent.ForkJoinPool;
 
 public class ForkJoin {
-    int threadNumber = 4;
-    
+    int threadNumber = 10;
+
     public ForkJoin(){
         ForkJoinPool fjp = new ForkJoinPool();
         FileChooser fc = new FileChooser();
         int threshold = fc.img.getWidth() / threadNumber;
 
-        Filter task = new Filter(fc.img, 0, fc.img.getWidth(), 0, fc.img.getHeight(), threshold);
+        FilterManager task = new FilterManager(fc.img, 0, fc.img.getWidth(), 0, fc.img.getHeight(), threshold);
         long beginT = System.nanoTime();
         fjp.invoke(task);
+//        task.join();
         long endT = System.nanoTime();
 
         System.out.println("Time: "+(endT-beginT)/1000000);
