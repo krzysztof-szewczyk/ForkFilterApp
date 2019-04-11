@@ -27,9 +27,9 @@ public class ForkJoin {
         long beginT = System.nanoTime();
 //        task.invoke();
 
-        FilterManager task = new FilterManager(fc.img, 0, fc.img.getWidth(), 0, fc.img.getHeight(), threshold);
-        long beginT = System.nanoTime();
-        fjp.invoke(task);
+//        FilterManager task = new FilterManager(fc.img, 0, fc.img.getWidth(), 0, fc.img.getHeight(), threshold);
+//        long beginT = System.nanoTime();
+//        fjp.invoke(task);
 //        task.join();
 
         long endT = System.nanoTime();
