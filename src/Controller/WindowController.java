@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.NegativeFilter;
+import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.CustomFilter;
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.SepiaFilter;
 import Model.FilterInterface.Filter;
 import Model.Validator.IntegerValidator;
@@ -13,8 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.converter.IntegerStringConverter;
 
@@ -23,8 +24,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URI;
 import java.util.concurrent.ForkJoinPool;
 
 public class WindowController {
@@ -65,6 +64,21 @@ public class WindowController {
     @FXML
     private TextField loadTxt;
 
+    @FXML
+    private HBox RGBBox;
+
+    @FXML
+    private Slider redSlider;
+
+    @FXML
+    private Slider greenSlider;
+
+    @FXML
+    private Slider blueSlider;
+
+    @FXML
+    private Button resetButton;
+
     private ForkJoinPool forkJoinPool = new ForkJoinPool();
 
     public ForkJoinPool getForkJoinPool() {
@@ -80,7 +94,7 @@ public class WindowController {
 
         loadBtn.setText("Load");
         newFilterSizeTxt.setText("3");
-        filterChoiceBox.getItems().setAll("Custom","Negative","Sepia","Filter3");
+        filterChoiceBox.getItems().setAll("Custom","Negative","Sepia");
         filterChoiceBox.getSelectionModel().selectFirst();
         filterChoiceBox.setOnAction(this::toggleMatrixEnable);
         sizeLabel.setText("Size: " + (int) originalImage.getImage().getWidth() + "x" + (int) originalImage.getImage().getHeight() + "px");
@@ -90,13 +104,21 @@ public class WindowController {
                 new TextFormatter<>(new IntegerStringConverter(),
                         forkJoinPool.getParallelism(),
                         new IntegerValidator("-?^([1-9]|[1-2][0-9]{0,4}|3[0-9]{0,3}|3[0-1][0-9]{0,3}|32[0-6][0-9]{0,2}|327[0-5][0-9]|3276[0-7])?")));
-//        try {
+//        filteredImage.getImage().getPixelReader().get
+//        try {l
 //            String absolute = new File("@../../resources/eif.jpg").getCanonicalPath();
 //            System.out.println(absolute);
 ////            printNewImage(new Image(absolute));
 //        } catch (IOException e) {
 //            JOptionPane.showMessageDialog(null, "Cannot load init image");
 //        }
+    }
+
+    @FXML
+    public void resetSliders(){
+        redSlider.setValue(0);
+        greenSlider.setValue(0);
+        blueSlider.setValue(0);
     }
 
     @FXML
@@ -144,10 +166,12 @@ public class WindowController {
         if(filterChoiceBox.getSelectionModel().getSelectedIndex() != 0){
             matrixGridPane.setDisable(true);
             newFilterSizeTxt.setDisable(true);
+            RGBBox.setDisable(true);
         }
         else {
             matrixGridPane.setDisable(false);
             newFilterSizeTxt.setDisable(false);
+            RGBBox.setDisable(false);
         }
     }
 
@@ -183,6 +207,7 @@ public class WindowController {
 
     @FXML
     public void filter(){
+
         // counter of recursive actions (tasks)
         FilterManager.i = 0;
         ForkJoinPool fjp = getForkJoinPool();
@@ -201,6 +226,11 @@ public class WindowController {
                 break;
             case "Sepia":
                 filter = new SepiaFilter();
+                break;
+            case "Custom":
+                int[] addRgb = {(int)redSlider.getValue(), (int)greenSlider.getValue(), (int)blueSlider.getValue()};
+//                RGBBox.getChildren();
+                filter = new CustomFilter(addRgb);
                 break;
             default:
                 filter = new NegativeFilter();

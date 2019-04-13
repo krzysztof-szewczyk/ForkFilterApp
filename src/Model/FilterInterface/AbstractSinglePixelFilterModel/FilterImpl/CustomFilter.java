@@ -4,7 +4,13 @@ import Model.FilterInterface.AbstractSinglePixelFilterModel.SinglePixelFilter;
 
 import java.awt.image.BufferedImage;
 
-public class NegativeFilter extends SinglePixelFilter {
+public class CustomFilter extends SinglePixelFilter {
+
+    private int[] addRgb;
+
+    public CustomFilter(int[] addRgb) {
+        this.addRgb = addRgb;
+    }
 
     @Override
     public void runFiltering(BufferedImage image, int startX, int endX, int startY, int endY) {
@@ -14,10 +20,18 @@ public class NegativeFilter extends SinglePixelFilter {
 
                 //get my RGB values
                 int[] argb = super.getMyRGB(image, x, y);
-//                System.out.println(argb[1]);
+
                 // negative filter
-                for(int i=1 ; i<argb.length ; i++)
-                    argb[i] = 255 - argb[i];
+                for(int i=1 ; i<argb.length ; i++){
+                    int newValue = argb[i] + addRgb[i-1];
+                    if(newValue>255){
+                        argb[i] = 255;
+                    }else if(newValue<0){
+                        argb[i] = 0;
+                    }else{
+                        argb[i] = argb[i] + addRgb[i-1];
+                    }
+                }
 
                 //set my new RGB values
                 super.setMyRGB(image, x, y,argb);
