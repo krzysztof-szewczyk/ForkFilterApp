@@ -4,7 +4,12 @@ import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.NegativeF
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.CustomFilter;
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.SepiaFilter;
 import Model.FilterInterface.Filter;
+import Model.GuiModel.RgbBox;
 import Model.Validator.IntegerValidator;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,7 +22,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
+import javafx.util.converter.NumberStringConverter;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -70,14 +77,24 @@ public class WindowController {
     @FXML
     private Slider redSlider;
 
+    @FXML Label redLabel;
+
     @FXML
     private Slider greenSlider;
+
+    @FXML
+    private Label greenLabel;
 
     @FXML
     private Slider blueSlider;
 
     @FXML
+    private Label blueLabel;
+
+    @FXML
     private Button resetButton;
+
+    private RgbBox rgbBoxObject;
 
     private ForkJoinPool forkJoinPool = new ForkJoinPool();
 
@@ -104,14 +121,7 @@ public class WindowController {
                 new TextFormatter<>(new IntegerStringConverter(),
                         forkJoinPool.getParallelism(),
                         new IntegerValidator("-?^([1-9]|[1-2][0-9]{0,4}|3[0-9]{0,3}|3[0-1][0-9]{0,3}|32[0-6][0-9]{0,2}|327[0-5][0-9]|3276[0-7])?")));
-//        filteredImage.getImage().getPixelReader().get
-//        try {l
-//            String absolute = new File("@../../resources/eif.jpg").getCanonicalPath();
-//            System.out.println(absolute);
-////            printNewImage(new Image(absolute));
-//        } catch (IOException e) {
-//            JOptionPane.showMessageDialog(null, "Cannot load init image");
-//        }
+//        redLabel.textProperty().bind(redSlider.valueProperty().asString());
     }
 
     @FXML
