@@ -2,7 +2,7 @@ package Model;
 
 import java.awt.image.BufferedImage;
 
-public class Filters {
+public class FiltersTmp {
 
     public void Negative(BufferedImage img, int startX, int endX, int startY, int endY) {
             System.out.println("Computing area: " + startX + ", " + endX + " , " + startY + ", " + endY);

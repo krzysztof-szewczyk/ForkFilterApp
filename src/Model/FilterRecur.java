@@ -3,13 +3,13 @@ package Model;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.RecursiveAction;
 
-public class Filter extends RecursiveAction {
+public class FilterRecur extends RecursiveAction {
 
     private int threshold;
     private int startX, endX, startY, endY;
     private BufferedImage img;
 
-    public Filter(BufferedImage im, int xs, int xe, int ys, int ye, int t) {
+    public FilterRecur(BufferedImage im, int xs, int xe, int ys, int ye, int t) {
         img = im;
         startX = xs;
         endX = xe;
@@ -47,7 +47,7 @@ public class Filter extends RecursiveAction {
         }
         else{
             int middleX = (startX+endX)/2;
-            invokeAll(new Filter(img, startX, middleX, startY, endY, threshold), new Filter(img, middleX, endX, startY, endY, threshold));
+            invokeAll(new FilterRecur(img, startX, middleX, startY, endY, threshold), new FilterRecur(img, middleX, endX, startY, endY, threshold));
         }
 
     }

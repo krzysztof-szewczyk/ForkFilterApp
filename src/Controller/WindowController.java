@@ -1,6 +1,6 @@
 package Controller;
 
-import Model.Filter;
+import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.NegativeFilter;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,12 +14,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.List;
 
 
 public class WindowController {
@@ -138,12 +136,17 @@ public class WindowController {
     }
 
     public void filter(){
+        // counter of recursive actions (tasks)
+        FilterManager.i=0;
+
         BufferedImage bi = SwingFXUtils.fromFXImage(originalImage.getImage(),null);
-        Filter task = new Filter(bi, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdLabel.getText()));
         long beginT = System.nanoTime();
-        task.invoke();
+
+        System.out.println(this.getClass().getName());
+        new FilterManager(bi, new NegativeFilter(), 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdLabel.getText())).invoke();
+        filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
+
         long endT = System.nanoTime();
         processingTimeLabel.setText("Processing time: "+(endT-beginT)/1000000+"ms");
-        filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
     }
 }

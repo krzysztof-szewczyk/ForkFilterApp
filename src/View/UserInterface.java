@@ -1,11 +1,9 @@
-package gui;
+package View;
 
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import javax.swing.*;
@@ -13,15 +11,13 @@ import java.io.IOException;
 
 public class UserInterface extends Application {
 
-
-
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("Window.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("FXML/Window.fxml"));
         AnchorPane anchorPane = null;
         try {
             anchorPane = loader.load();
@@ -30,7 +26,7 @@ public class UserInterface extends Application {
         }
         Scene scene = new Scene(anchorPane);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Filter app");
+        primaryStage.setTitle("FilterRecur app");
         primaryStage.show();
     }
 }
