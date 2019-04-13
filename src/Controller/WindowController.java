@@ -2,27 +2,26 @@ package Controller;
 
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.NegativeFilter;
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.SepiaFilter;
+import Model.FilterInterface.Filter;
+import Model.Validator.IntegerValidator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-
+import java.util.concurrent.ForkJoinPool;
 
 public class WindowController {
-
 
     @FXML
     private Button loadBtn;
@@ -51,16 +50,40 @@ public class WindowController {
     @FXML
     private Label processingTimeLabel;
 
+    @FXML
+    private Label tasksLabel;
+
+    @FXML
+    private Label parallelismLevelLabel;
+
+    @FXML
+    private TextField parallelismLevelTxt;
+
+    private ForkJoinPool forkJoinPool = new ForkJoinPool();
+
+    public ForkJoinPool getForkJoinPool() {
+        return forkJoinPool;
+    }
+
+    public void setForkJoinPool() {
+        this.forkJoinPool = new ForkJoinPool(Integer.parseInt(parallelismLevelTxt.getText()));
+    }
 
     @FXML
     public void initialize(){
 
         loadBtn.setText("Load");
         newFilterSizeTxt.setText("3");
-        filterChoiceBox.getItems().setAll("Custom","Filter1","Filter2","Filter3");
+        filterChoiceBox.getItems().setAll("Custom","Negative","Sepia","Filter3");
         filterChoiceBox.getSelectionModel().selectFirst();
         filterChoiceBox.setOnAction(this::toggleMatrixEnable);
         sizeLabel.setText("Size: " + (int) originalImage.getImage().getWidth() + "x" + (int) originalImage.getImage().getHeight() + "px");
+        newFilterSizeTxt.setTextFormatter(
+                new TextFormatter<>(new IntegerStringConverter(), 3, new IntegerValidator("-?([1-5])?")));
+        parallelismLevelTxt.setTextFormatter(
+                new TextFormatter<>(new IntegerStringConverter(),
+                        ForkJoinPool.commonPool().getParallelism(),
+                        new IntegerValidator("-?^([1-9]|[1-2][0-9]{0,4}|3[0-9]{0,3}|3[0-1][0-9]{0,3}|32[0-6][0-9]{0,2}|327[0-5][0-9]|3276[0-7])?")));
     }
 
     @FXML
@@ -69,12 +92,6 @@ public class WindowController {
         String str = newFilterSizeTxt.getText();
         if(str.equals("") || str.isEmpty()){
             notNum = true;
-        }else{
-            for(char c : str.toCharArray()){
-                if(c < '1' || c > '5'){
-                    notNum = true;
-                }
-            }
         }
 
         if(!notNum){
@@ -110,7 +127,7 @@ public class WindowController {
     }
 
     @FXML
-    public void toggleMatrixEnable(ActionEvent actionEvent){
+    private void toggleMatrixEnable(ActionEvent actionEvent){
         if(filterChoiceBox.getSelectionModel().getSelectedIndex() != 0){
             matrixGridPane.setDisable(true);
             newFilterSizeTxt.setDisable(true);
@@ -136,18 +153,34 @@ public class WindowController {
         }
     }
 
+    @FXML
     public void filter(){
         // counter of recursive actions (tasks)
         FilterManager.i=0;
+        ForkJoinPool fjp = getForkJoinPool();
 
         BufferedImage bi = SwingFXUtils.fromFXImage(originalImage.getImage(),null);
+        String filterName = filterChoiceBox.getSelectionModel().getSelectedItem();
+        Filter filter;
+        switch (filterName){
+            case "Negative":
+                filter = new NegativeFilter();
+                break;
+            case "Sepia":
+                filter = new SepiaFilter();
+                break;
+            default:
+                filter = new NegativeFilter();
+        }
+
         long beginT = System.nanoTime();
-
-        System.out.println(this.getClass().getName());
-        new FilterManager(bi, new SepiaFilter(), 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdLabel.getText())).invoke();
+        FilterManager fm = new FilterManager(bi, filter, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdLabel.getText()));
+        fjp.invoke(fm);
         filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
-
+        tasksLabel.setText("Tasks: " + FilterManager.i);
+        parallelismLevelLabel.setText("Parallelism level: " + fjp.getParallelism());
         long endT = System.nanoTime();
+
         processingTimeLabel.setText("Processing time: "+(endT-beginT)/1000000+"ms");
     }
 }

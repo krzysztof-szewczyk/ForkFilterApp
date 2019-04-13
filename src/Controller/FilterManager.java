@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.util.concurrent.RecursiveAction;
 
 public class FilterManager extends RecursiveAction {
-//    FiltersTmp filtersTmp = new FiltersTmp();
     int threshold;
     int startX, endX, startY, endY;
     BufferedImage image;
@@ -21,24 +20,19 @@ public class FilterManager extends RecursiveAction {
         this.endY = endY;
         this.threshold = threshold;
         this.filter = filter;
-//        System.out.println(this.getClass().getName());
     }
 
     @Override
     protected void compute() {
         // sequently
         if (endX - startX <= threshold) {
-            System.out.println(i++);
-//            System.out.println("Computing area: " + startX + ", " + endX + " , " + startY + ", " + endY);
             filter.runFiltering(image, startX, endX, startY, endY);
-//            filtersTmp.Sepia(img, startX, endX, startY, endY);
         }
         // simultaneously
         else{
             int middleX = (startX+endX)/2;
             invokeAll(new FilterManager(image, filter, startX, middleX, startY, endY, threshold), new FilterManager(image, filter, middleX, endX, startY, endY, threshold));
         }
-
     }
 }
 
