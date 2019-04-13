@@ -13,6 +13,7 @@ public class FilterManager extends RecursiveAction {
     static int i=0;
 
     public FilterManager(BufferedImage image, Filter filter, int startX, int endX, int startY, int endY, int threshold) {
+        i++;
         this.image = image;
         this.startX = startX;
         this.endX = endX;

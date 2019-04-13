@@ -82,7 +82,7 @@ public class WindowController {
                 new TextFormatter<>(new IntegerStringConverter(), 3, new IntegerValidator("-?([1-5])?")));
         parallelismLevelTxt.setTextFormatter(
                 new TextFormatter<>(new IntegerStringConverter(),
-                        ForkJoinPool.commonPool().getParallelism(),
+                        forkJoinPool.getParallelism(),
                         new IntegerValidator("-?^([1-9]|[1-2][0-9]{0,4}|3[0-9]{0,3}|3[0-1][0-9]{0,3}|32[0-6][0-9]{0,2}|327[0-5][0-9]|3276[0-7])?")));
     }
 
@@ -158,6 +158,11 @@ public class WindowController {
         // counter of recursive actions (tasks)
         FilterManager.i=0;
         ForkJoinPool fjp = getForkJoinPool();
+        int pool = Integer.parseInt(parallelismLevelTxt.getText());
+        if(fjp.getParallelism() != pool){
+            fjp = new ForkJoinPool(pool);
+        }
+
 
         BufferedImage bi = SwingFXUtils.fromFXImage(originalImage.getImage(),null);
         String filterName = filterChoiceBox.getSelectionModel().getSelectedItem();
@@ -178,7 +183,6 @@ public class WindowController {
         fjp.invoke(fm);
         filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
         tasksLabel.setText("Tasks: " + FilterManager.i);
-        parallelismLevelLabel.setText("Parallelism level: " + fjp.getParallelism());
         long endT = System.nanoTime();
 
         processingTimeLabel.setText("Processing time: "+(endT-beginT)/1000000+"ms");
