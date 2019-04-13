@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.NegativeFilter;
+import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.SepiaFilter;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -143,7 +144,7 @@ public class WindowController {
         long beginT = System.nanoTime();
 
         System.out.println(this.getClass().getName());
-        new FilterManager(bi, new NegativeFilter(), 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdLabel.getText())).invoke();
+        new FilterManager(bi, new SepiaFilter(), 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdLabel.getText())).invoke();
         filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
 
         long endT = System.nanoTime();

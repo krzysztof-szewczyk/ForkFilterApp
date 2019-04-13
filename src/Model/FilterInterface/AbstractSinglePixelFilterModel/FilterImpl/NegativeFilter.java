@@ -11,6 +11,7 @@ public class NegativeFilter extends SinglePixelFilter {
 //        System.out.println("Computing area: " + startX + ", " + endX + " , " + startY + ", " + endY);
         for (int y = startY; y < endY; y++) {
             for (int x = startX; x < endX; x++) {
+
                 //get my RGB values
                 int[] argb = super.getMyRGB(image, x, y);
 
