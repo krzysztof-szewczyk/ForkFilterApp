@@ -14,11 +14,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.converter.IntegerStringConverter;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
 import java.util.concurrent.ForkJoinPool;
 
 public class WindowController {
@@ -54,10 +60,10 @@ public class WindowController {
     private Label tasksLabel;
 
     @FXML
-    private Label parallelismLevelLabel;
+    private TextField parallelismLevelTxt;
 
     @FXML
-    private TextField parallelismLevelTxt;
+    private TextField loadTxt;
 
     private ForkJoinPool forkJoinPool = new ForkJoinPool();
 
@@ -84,6 +90,13 @@ public class WindowController {
                 new TextFormatter<>(new IntegerStringConverter(),
                         forkJoinPool.getParallelism(),
                         new IntegerValidator("-?^([1-9]|[1-2][0-9]{0,4}|3[0-9]{0,3}|3[0-1][0-9]{0,3}|32[0-6][0-9]{0,2}|327[0-5][0-9]|3276[0-7])?")));
+//        try {
+//            String absolute = new File("@../../resources/eif.jpg").getCanonicalPath();
+//            System.out.println(absolute);
+////            printNewImage(new Image(absolute));
+//        } catch (IOException e) {
+//            JOptionPane.showMessageDialog(null, "Cannot load init image");
+//        }
     }
 
     @FXML
@@ -149,14 +162,29 @@ public class WindowController {
         File selectedFile = fc.showOpenDialog(null);
 
         if(selectedFile != null) {
-            originalImage.setImage(new Image(selectedFile.toURI().toString()));
+            loadTxt.setText(selectedFile.getAbsolutePath());
+            printNewImage(new Image(selectedFile.toURI().toString()));
         }
+    }
+
+    @FXML
+    private void searchImageByPath(){
+        try {
+            Image image = new Image(new FileInputStream(loadTxt.getText()));
+            printNewImage(image);
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "Could not find image");
+        }
+    }
+
+    private  void printNewImage(Image image){
+        originalImage.setImage(image);
     }
 
     @FXML
     public void filter(){
         // counter of recursive actions (tasks)
-        FilterManager.i=0;
+        FilterManager.i = 0;
         ForkJoinPool fjp = getForkJoinPool();
         int pool = Integer.parseInt(parallelismLevelTxt.getText());
         if(fjp.getParallelism() != pool){
