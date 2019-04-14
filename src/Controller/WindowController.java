@@ -9,15 +9,12 @@ import Model.GuiModel.MyProperties;
 import Model.Validator.IntegerValidator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
@@ -57,7 +54,7 @@ public class WindowController {
     private Label sizeLabel;
 
     @FXML
-    private TextField thresholdLabel;
+    private TextField thresholdTxt;
 
     @FXML
     private Label processingTimeLabel;
@@ -119,7 +116,7 @@ public class WindowController {
         greenSlider.setTooltip(new Tooltip("Set value to add"));
         blueSlider.setTooltip(new Tooltip("Set value to add"));
         parallelismLevelTxt.setTooltip(new Tooltip("Set pool. Default the number of processors"));
-        thresholdLabel.setTooltip(new Tooltip("Only under this threshold tasks are processed sequentially"));
+        thresholdTxt.setTooltip(new Tooltip("Only under this threshold tasks are processed sequentially"));
         filterChoiceBox.setTooltip(new Tooltip("Select filter"));
 
         //Init
@@ -137,6 +134,10 @@ public class WindowController {
                 new TextFormatter<>(new IntegerStringConverter(),
                         forkJoinPool.getParallelism(),
                         new IntegerValidator("-?^([1-9]|[1-2][0-9]{0,4}|3[0-9]{0,3}|3[0-1][0-9]{0,3}|32[0-6][0-9]{0,2}|327[0-5][0-9]|3276[0-7])?")));
+        thresholdTxt.setTextFormatter(
+                new TextFormatter<>(new IntegerStringConverter(),
+                        forkJoinPool.getParallelism(),
+                        new IntegerValidator("-?^([1-9]|[1-9][0-9]*)?")));
 
         /**
          *  Binding sliders to Doubleproperties binded to IntegerProperty binded to RgbLabels
@@ -322,7 +323,7 @@ public class WindowController {
         if(!filter.equals(null)){
 
             long beginT = System.nanoTime();
-            FilterManager fm = new FilterManager(bi, filter, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdLabel.getText()));
+            FilterManager fm = new FilterManager(bi, filter, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdTxt.getText()));
             fjp.invoke(fm);
             filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
             tasksLabel.setText("Tasks: " + FilterManager.i);
