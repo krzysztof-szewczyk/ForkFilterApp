@@ -44,7 +44,7 @@
                   <Button mnemonicParsing="false" onAction="#filter" style="-fx-background-color: #1a75ff;" text="Filter" textFill="#c5c5c5" />
                </children>
             </HBox>
-            <HBox prefHeight="503.0" prefWidth="567.0">
+            <HBox prefHeight="503.0" prefWidth="567.0" VBox.vgrow="ALWAYS">
                <children>
                   <VBox prefHeight="39.0" prefWidth="158.0">
                      <children>
@@ -163,24 +163,24 @@
                            <children>
                               <HBox fx:id="RGBBox" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="96.0">
+                                    <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="25.0">
                                        <children>
                                           <Label text="R" textFill="RED">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
                                           </Label>
-                                          <Slider fx:id="redSlider" blockIncrement="1.0" max="127.0" min="-128.0" orientation="VERTICAL" prefHeight="92.0" prefWidth="14.0" />
-                                          <Label fx:id="redLabel" prefHeight="17.0" prefWidth="37.0" text="0" textAlignment="CENTER">
+                                          <Slider fx:id="redSlider" blockIncrement="1.0" max="127.0" min="-128.0" orientation="VERTICAL" />
+                                          <Label fx:id="redLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="25.0" text="0" textAlignment="CENTER">
                                              <VBox.margin>
                                                 <Insets />
                                              </VBox.margin></Label>
                                        </children>
                                        <HBox.margin>
-                                          <Insets left="10.0" right="10.0" />
+                                          <Insets left="10.0" />
                                        </HBox.margin>
                                     </VBox>
-                                    <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="0.0">
+                                    <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="25.0">
                                        <children>
                                           <Label text="G" textFill="#36a126">
                                              <font>
@@ -192,13 +192,16 @@
                                                 <Insets />
                                              </VBox.margin>
                                           </Slider>
-                                          <Label fx:id="greenLabel" prefHeight="17.0" prefWidth="20.0" text="0" textAlignment="CENTER" />
+                                          <Label fx:id="greenLabel" alignment="CENTER" prefHeight="17.0" prefWidth="25.0" text="0" textAlignment="CENTER" />
                                        </children>
                                        <HBox.margin>
                                           <Insets left="10.0" right="10.0" />
                                        </HBox.margin>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
                                     </VBox>
-                                    <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="0.0">
+                                    <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="25.0">
                                        <children>
                                           <Label text="B" textFill="#198fdd">
                                              <font>
@@ -207,10 +210,10 @@
                                           </Label>
                                           <Slider fx:id="blueSlider" blockIncrement="1.0" max="127.0" min="-128.0" orientation="VERTICAL">
                                              <VBox.margin>
-                                                <Insets left="10.0" right="10.0" />
+                                                <Insets />
                                              </VBox.margin>
                                           </Slider>
-                                          <Label fx:id="blueLabel" prefHeight="17.0" prefWidth="20.0" text="0" textAlignment="CENTER" />
+                                          <Label fx:id="blueLabel" alignment="CENTER" prefHeight="17.0" prefWidth="25.0" text="0" textAlignment="CENTER" />
                                        </children>
                                     </VBox>
                                     <Button fx:id="resetButton" mnemonicParsing="false" onAction="#resetSliders" style="-fx-background-color: #1a75ff;" text="Reset" textFill="#c5c5c5" />
@@ -244,7 +247,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
                   </VBox>
-                  <VBox prefHeight="170.0" prefWidth="100.0">
+                  <VBox alignment="TOP_CENTER" prefHeight="170.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Original:" textFill="#435761">
                            <font>
@@ -259,14 +262,14 @@
                         <Insets right="5.0" />
                      </HBox.margin>
                   </VBox>
-                  <VBox prefHeight="200.0" prefWidth="100.0">
+                  <VBox fx:id="vBoxFilteredImage" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="Filtered:" textFill="#435761">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
-                        <ImageView fx:id="filteredImage" fitHeight="390.0" fitWidth="241.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="filteredImage" fitHeight="390.0" fitWidth="412.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="file:/C:/Users/Ozii/Desktop/projects/ImageFilteringFJ/resources/strawberry.jpg" />
                            </image>

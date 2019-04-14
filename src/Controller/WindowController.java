@@ -4,12 +4,8 @@ import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.NegativeF
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.CustomFilter;
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.SepiaFilter;
 import Model.FilterInterface.Filter;
-import Model.GuiModel.RgbBox;
+import Model.GuiModel.RgbSlidersProperties;
 import Model.Validator.IntegerValidator;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,17 +16,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
-import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
-import javafx.util.converter.NumberStringConverter;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ForkJoinPool;
 
 public class WindowController {
@@ -91,10 +87,11 @@ public class WindowController {
     @FXML
     private Label blueLabel;
 
-    @FXML
-    private Button resetButton;
+    private RgbSlidersProperties redSlidersPropertiesObject = new RgbSlidersProperties();
 
-    private RgbBox rgbBoxObject;
+    private RgbSlidersProperties greenSlidersPropertiesObject = new RgbSlidersProperties();
+
+    private RgbSlidersProperties blueSlidersPropertiesObject = new RgbSlidersProperties();
 
     private ForkJoinPool forkJoinPool = new ForkJoinPool();
 
@@ -115,13 +112,30 @@ public class WindowController {
         filterChoiceBox.getSelectionModel().selectFirst();
         filterChoiceBox.setOnAction(this::toggleMatrixEnable);
         sizeLabel.setText("Size: " + (int) originalImage.getImage().getWidth() + "x" + (int) originalImage.getImage().getHeight() + "px");
+        // Set filter size text field validator
         newFilterSizeTxt.setTextFormatter(
                 new TextFormatter<>(new IntegerStringConverter(), 3, new IntegerValidator("-?([1-5])?")));
+        // Set parallelism level text field validator
         parallelismLevelTxt.setTextFormatter(
                 new TextFormatter<>(new IntegerStringConverter(),
                         forkJoinPool.getParallelism(),
                         new IntegerValidator("-?^([1-9]|[1-2][0-9]{0,4}|3[0-9]{0,3}|3[0-1][0-9]{0,3}|32[0-6][0-9]{0,2}|327[0-5][0-9]|3276[0-7])?")));
-//        redLabel.textProperty().bind(redSlider.valueProperty().asString());
+
+        /**
+         *  Binding sliders to Doubleproperties binded to IntegerProperty binded to RgbLabels
+        */
+        // Red binding
+        redSlider.valueProperty().bindBidirectional(redSlidersPropertiesObject.dpProperty());
+        redSlidersPropertiesObject.dpProperty().bindBidirectional(redSlidersPropertiesObject.ipProperty());
+        redLabel.textProperty().bind(redSlidersPropertiesObject.ipProperty().asString());
+        // Green binding
+        greenSlider.valueProperty().bindBidirectional(greenSlidersPropertiesObject.dpProperty());
+        greenSlidersPropertiesObject.dpProperty().bindBidirectional(greenSlidersPropertiesObject.ipProperty());
+        greenLabel.textProperty().bind(greenSlidersPropertiesObject.ipProperty().asString());
+        // Blue binding
+        blueSlider.valueProperty().bindBidirectional(blueSlidersPropertiesObject.dpProperty());
+        blueSlidersPropertiesObject.dpProperty().bindBidirectional(blueSlidersPropertiesObject.ipProperty());
+        blueLabel.textProperty().bind(blueSlidersPropertiesObject.ipProperty().asString());
     }
 
     @FXML
@@ -188,12 +202,18 @@ public class WindowController {
     @FXML
     public void openFileChooser(){
         FileChooser fc = new FileChooser();
-        fc.setInitialDirectory(new File("C:\\Users\\Ozii\\Desktop"));
+
         fc.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("JPG", "*.jpg"),
                 new FileChooser.ExtensionFilter("PNG", "*.png")
         );
-        File selectedFile = fc.showOpenDialog(null);
+
+        File startDirectory = new File(System.getProperty("user.home") + "/Desktop");
+
+        if(startDirectory.exists())
+            fc.setInitialDirectory(startDirectory);
+
+        File selectedFile= fc.showOpenDialog( null);
 
         if(selectedFile != null) {
             loadTxt.setText(selectedFile.getAbsolutePath());
@@ -237,9 +257,11 @@ public class WindowController {
             case "Sepia":
                 filter = new SepiaFilter();
                 break;
+//            case "STest":
+////                filter = new C();
+//                break;
             case "Custom":
                 int[] addRgb = {(int)redSlider.getValue(), (int)greenSlider.getValue(), (int)blueSlider.getValue()};
-//                RGBBox.getChildren();
                 filter = new CustomFilter(addRgb);
                 break;
             default:
