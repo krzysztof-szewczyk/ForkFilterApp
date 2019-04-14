@@ -28,6 +28,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
 public class WindowController {
@@ -87,6 +89,8 @@ public class WindowController {
 
     @FXML
     private Label blueLabel;
+
+    private List filterValueList = new ArrayList<TextField>();
 
     private RgbSlidersProperties redSlidersPropertiesObject = new RgbSlidersProperties();
 
@@ -155,6 +159,10 @@ public class WindowController {
         }
 
         if(!notNum){
+
+            // clear old fields
+            filterValueList.clear();
+
             int n = Integer.parseInt(newFilterSizeTxt.getText());
             int txtSize = 25;
             int margin = 2;
@@ -167,11 +175,11 @@ public class WindowController {
 
             matrixGridPane.getColumnConstraints().clear();
             matrixGridPane.getRowConstraints().clear();
-
-            for(int i = 0 ; i<n ; i++) {
+            int index = 0;
+            for(int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     TextField tf = new TextField();
-                    tf.setText("3");
+                    tf.setText("1");
                     tf.setPrefSize(txtSize, txtSize);
                     tf.setMaxSize(txtSize, txtSize);
                     tf.setMinSize(txtSize, txtSize);
@@ -181,6 +189,8 @@ public class WindowController {
                     GridPane.setConstraints(tf, i, j);
                     GridPane.setMargin(tf, new Insets(2, 2, 2, 2));
                     matrixGridPane.getChildren().add(tf);
+                    filterValueList.add(matrixGridPane.getChildren().get(index));
+                    index++;
                 }
             }
         }
@@ -188,15 +198,19 @@ public class WindowController {
 
     @FXML
     private void toggleMatrixEnable(ActionEvent actionEvent){
-        if(filterChoiceBox.getSelectionModel().getSelectedIndex() != 0){
+        if(filterChoiceBox.getSelectionModel().getSelectedIndex() == 0){
+            RGBBox.setDisable(false);
             matrixGridPane.setDisable(true);
             newFilterSizeTxt.setDisable(true);
+        }else if(filterChoiceBox.getSelectionModel().getSelectedIndex() == 3){
+            matrixGridPane.setDisable(false);
+            newFilterSizeTxt.setDisable(false);
             RGBBox.setDisable(true);
         }
         else {
-            matrixGridPane.setDisable(false);
-            newFilterSizeTxt.setDisable(false);
-            RGBBox.setDisable(false);
+            matrixGridPane.setDisable(true);
+            newFilterSizeTxt.setDisable(true);
+            RGBBox.setDisable(true);
         }
     }
 
@@ -205,8 +219,9 @@ public class WindowController {
         FileChooser fc = new FileChooser();
 
         fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png")
+                new FileChooser.ExtensionFilter("*", "*.jpg", "*.png"),
+                new FileChooser.ExtensionFilter(".jpg", "*.jpg"),
+                new FileChooser.ExtensionFilter(".png", "*.png")
         );
 
         File startDirectory = new File(System.getProperty("user.home") + "/Desktop");
@@ -250,10 +265,8 @@ public class WindowController {
 
         BufferedImage bi = SwingFXUtils.fromFXImage(originalImage.getImage(),null);
         String filterName = filterChoiceBox.getSelectionModel().getSelectedItem();
-        Filter filter;
-        long ll = 111;
-        double dd = 1.23;
-        System.out.println(ll*dd);
+        Filter filter = null;
+
         switch (filterName){
             case "Negative":
                 filter = new NegativeFilter();
@@ -262,24 +275,34 @@ public class WindowController {
                 filter = new SepiaFilter();
                 break;
             case "Matrix":
-                int[][] tmp = {{1, 0, -1},{-0, 0, 0},{-1, 0, 1}};
-                filter = new CustomMatrixFilter(tmp, originalImage.getImage().getPixelReader());
+                int size = Integer.parseInt(newFilterSizeTxt.getText());
+                int[][] filterValues = new int[size][size];
+                int index = 0;
+                for(int i = 0; i<size; i++){
+                    for(int j = 0; j<size; j++){
+//                        System.out.println(((TextField) filterValueList.get(index)).getText());
+                        filterValues[i][j] = Integer.parseInt(((TextField) filterValueList.get(index)).getText());
+                        index++;
+                    }
+                }
+                filter = new CustomMatrixFilter(filterValues, originalImage.getImage().getPixelReader());
                 break;
             case "Custom":
                 int[] addRgb = {(int)redSlider.getValue(), (int)greenSlider.getValue(), (int)blueSlider.getValue()};
                 filter = new CustomFilter(addRgb);
                 break;
             default:
-                filter = new NegativeFilter();
+                JOptionPane.showMessageDialog(null, "Select correct filter");
         }
 
-        long beginT = System.nanoTime();
-        FilterManager fm = new FilterManager(bi, filter, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdLabel.getText()));
-        fjp.invoke(fm);
-        filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
-        tasksLabel.setText("Tasks: " + FilterManager.i);
-        long endT = System.nanoTime();
-
-        processingTimeLabel.setText("Processing time: "+(endT-beginT)/1000000+"ms");
+        if(!filter.equals(null)){
+            long beginT = System.nanoTime();
+            FilterManager fm = new FilterManager(bi, filter, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdLabel.getText()));
+            fjp.invoke(fm);
+            filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
+            tasksLabel.setText("Tasks: " + FilterManager.i);
+            long endT = System.nanoTime();
+            processingTimeLabel.setText("Processing time: "+(endT-beginT)/1000000+"ms");
+        }
     }
 }

@@ -26,7 +26,6 @@ public class CustomMatrixFilter extends MultiPixelFilter {
                 }else if(min>filterMatrix[i][j]){
                     min = filterMatrix[i][j];
                 }
-
             }
         }
 
@@ -63,13 +62,14 @@ public class CustomMatrixFilter extends MultiPixelFilter {
         int indX=0;
         for (int i = startFilterX; i < (startFilterX+filterMatrix.length); i++) {
 
+            // if out of range in X dimension
             if(i<0 || i>=image.getWidth()){
                 continue;
             }
 
             int indY = 0;
             for (int j = startFilterY; j < (startFilterY+filterMatrix.length); j++) {
-
+                // if out of range in Y dimension
                 if(j<0 || j>=image.getHeight())
                     continue;
 
