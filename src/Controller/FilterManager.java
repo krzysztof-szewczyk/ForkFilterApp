@@ -1,15 +1,16 @@
 package Controller;
 
 import Model.FilterInterface.Filter;
+import Model.GuiModel.MyProperties;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.RecursiveAction;
 
 public class FilterManager extends RecursiveAction {
-    int threshold;
-    int startX, endX, startY, endY;
-    BufferedImage image;
-    Filter filter;
+    private int threshold;
+    private int startX, endX, startY, endY;
+    private BufferedImage image;
+    private Filter filter;
     static int i=0;
 
     public FilterManager(BufferedImage image, Filter filter, int startX, int endX, int startY, int endY, int threshold) {
@@ -28,6 +29,11 @@ public class FilterManager extends RecursiveAction {
         // sequently
         if (endX - startX <= threshold) {
             filter.runFiltering(image, startX, endX, startY, endY);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         // simultaneously
         else{

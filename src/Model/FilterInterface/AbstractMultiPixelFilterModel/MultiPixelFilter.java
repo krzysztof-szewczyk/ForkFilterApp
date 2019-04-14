@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 
 public abstract class MultiPixelFilter implements Filter {
 
-    private BufferedImage image;
 
     @Override
     public int[] getMyRGB(BufferedImage image, int x, int y) {

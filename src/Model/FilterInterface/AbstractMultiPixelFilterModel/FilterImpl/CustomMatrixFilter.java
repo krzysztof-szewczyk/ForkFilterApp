@@ -1,6 +1,8 @@
 package Model.FilterInterface.AbstractMultiPixelFilterModel.FilterImpl;
 
 import Model.FilterInterface.AbstractMultiPixelFilterModel.MultiPixelFilter;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 
 import java.awt.image.BufferedImage;

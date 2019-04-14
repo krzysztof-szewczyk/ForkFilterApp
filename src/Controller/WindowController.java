@@ -5,19 +5,21 @@ import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.NegativeF
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.CustomFilter;
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.SepiaFilter;
 import Model.FilterInterface.Filter;
-import Model.GuiModel.RgbSlidersProperties;
+import Model.GuiModel.MyProperties;
 import Model.Validator.IntegerValidator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.util.converter.IntegerStringConverter;
@@ -27,7 +29,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
@@ -76,7 +77,8 @@ public class WindowController {
     @FXML
     private Slider redSlider;
 
-    @FXML Label redLabel;
+    @FXML
+    private Label redLabel;
 
     @FXML
     private Slider greenSlider;
@@ -92,11 +94,11 @@ public class WindowController {
 
     private List filterValueList = new ArrayList<TextField>();
 
-    private RgbSlidersProperties redSlidersPropertiesObject = new RgbSlidersProperties();
+    private MyProperties redSlidersPropertiesObject = new MyProperties();
 
-    private RgbSlidersProperties greenSlidersPropertiesObject = new RgbSlidersProperties();
+    private MyProperties greenSlidersPropertiesObject = new MyProperties();
 
-    private RgbSlidersProperties blueSlidersPropertiesObject = new RgbSlidersProperties();
+    private MyProperties blueSlidersPropertiesObject = new MyProperties();
 
     private ForkJoinPool forkJoinPool = new ForkJoinPool();
 
@@ -119,7 +121,7 @@ public class WindowController {
         sizeLabel.setText("Size: " + (int) originalImage.getImage().getWidth() + "x" + (int) originalImage.getImage().getHeight() + "px");
         // Set filter size text field validator
         newFilterSizeTxt.setTextFormatter(
-                new TextFormatter<>(new IntegerStringConverter(), 3, new IntegerValidator("-?([1-5])?")));
+                new TextFormatter<>(new IntegerStringConverter(), 3, new IntegerValidator("-?([1|3|5|7])?")));
         // Set parallelism level text field validator
         parallelismLevelTxt.setTextFormatter(
                 new TextFormatter<>(new IntegerStringConverter(),
@@ -130,17 +132,26 @@ public class WindowController {
          *  Binding sliders to Doubleproperties binded to IntegerProperty binded to RgbLabels
         */
         // Red binding
-        redSlider.valueProperty().bindBidirectional(redSlidersPropertiesObject.dpProperty());
-        redSlidersPropertiesObject.dpProperty().bindBidirectional(redSlidersPropertiesObject.ipProperty());
-        redLabel.textProperty().bind(redSlidersPropertiesObject.ipProperty().asString());
+        redSlider.valueProperty().bindBidirectional(redSlidersPropertiesObject.stringToDoubleProperty());
+        redSlidersPropertiesObject.stringToDoubleProperty().bindBidirectional(redSlidersPropertiesObject.doubleToIntProperty());
+        redLabel.textProperty().bind(redSlidersPropertiesObject.doubleToIntProperty().asString());
         // Green binding
-        greenSlider.valueProperty().bindBidirectional(greenSlidersPropertiesObject.dpProperty());
-        greenSlidersPropertiesObject.dpProperty().bindBidirectional(greenSlidersPropertiesObject.ipProperty());
-        greenLabel.textProperty().bind(greenSlidersPropertiesObject.ipProperty().asString());
+        greenSlider.valueProperty().bindBidirectional(greenSlidersPropertiesObject.stringToDoubleProperty());
+        greenSlidersPropertiesObject.stringToDoubleProperty().bindBidirectional(greenSlidersPropertiesObject.doubleToIntProperty());
+        greenLabel.textProperty().bind(greenSlidersPropertiesObject.doubleToIntProperty().asString());
         // Blue binding
-        blueSlider.valueProperty().bindBidirectional(blueSlidersPropertiesObject.dpProperty());
-        blueSlidersPropertiesObject.dpProperty().bindBidirectional(blueSlidersPropertiesObject.ipProperty());
-        blueLabel.textProperty().bind(blueSlidersPropertiesObject.ipProperty().asString());
+        blueSlider.valueProperty().bindBidirectional(blueSlidersPropertiesObject.stringToDoubleProperty());
+        blueSlidersPropertiesObject.stringToDoubleProperty().bindBidirectional(blueSlidersPropertiesObject.doubleToIntProperty());
+        blueLabel.textProperty().bind(blueSlidersPropertiesObject.doubleToIntProperty().asString());
+        // Align images to each other
+        filteredImage.fitWidthProperty().bindBidirectional(originalImage.fitWidthProperty());
+
+        changeFilterMatrix();
+    }
+
+    @FXML
+    public void setFilteredAsOriginal(){
+        printNewImage(filteredImage.getImage());
     }
 
     @FXML
@@ -179,7 +190,6 @@ public class WindowController {
             for(int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     TextField tf = new TextField();
-                    tf.setText("1");
                     tf.setPrefSize(txtSize, txtSize);
                     tf.setMaxSize(txtSize, txtSize);
                     tf.setMinSize(txtSize, txtSize);
@@ -189,6 +199,7 @@ public class WindowController {
                     GridPane.setConstraints(tf, i, j);
                     GridPane.setMargin(tf, new Insets(2, 2, 2, 2));
                     matrixGridPane.getChildren().add(tf);
+                    tf.setTextFormatter(new TextFormatter<>(new IntegerStringConverter(), 1, new IntegerValidator("-?((-[1-9])|[0-9])?")));
                     filterValueList.add(matrixGridPane.getChildren().get(index));
                     index++;
                 }
@@ -249,6 +260,7 @@ public class WindowController {
 
     private  void printNewImage(Image image){
         originalImage.setImage(image);
+        filteredImage.setImage(image);
     }
 
     @FXML
@@ -256,6 +268,7 @@ public class WindowController {
 
         // counter of recursive actions (tasks)
         FilterManager.i = 0;
+
         ForkJoinPool fjp = getForkJoinPool();
         int pool = Integer.parseInt(parallelismLevelTxt.getText());
         if(fjp.getParallelism() != pool){
@@ -280,7 +293,6 @@ public class WindowController {
                 int index = 0;
                 for(int i = 0; i<size; i++){
                     for(int j = 0; j<size; j++){
-//                        System.out.println(((TextField) filterValueList.get(index)).getText());
                         filterValues[i][j] = Integer.parseInt(((TextField) filterValueList.get(index)).getText());
                         index++;
                     }
@@ -296,6 +308,7 @@ public class WindowController {
         }
 
         if(!filter.equals(null)){
+
             long beginT = System.nanoTime();
             FilterManager fm = new FilterManager(bi, filter, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdLabel.getText()));
             fjp.invoke(fm);
