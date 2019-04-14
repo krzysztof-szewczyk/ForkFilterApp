@@ -14,7 +14,6 @@ public class FilterManager extends RecursiveAction {
     static int i=0;
 
     public FilterManager(BufferedImage image, Filter filter, int startX, int endX, int startY, int endY, int threshold) {
-        i++;
         this.image = image;
         this.startX = startX;
         this.endX = endX;
@@ -28,12 +27,8 @@ public class FilterManager extends RecursiveAction {
     protected void compute() {
         // sequently
         if (endX - startX <= threshold) {
+            i++;
             filter.runFiltering(image, startX, endX, startY, endY);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
         // simultaneously
         else{

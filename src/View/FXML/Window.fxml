@@ -239,7 +239,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" prefHeight="14.0" prefWidth="158.0">
                                  <children>
-                                    <Label text="Thresold:" textFill="#435761">
+                                    <Label text="Threshold:" textFill="#435761">
                                        <HBox.margin>
                                           <Insets bottom="5.0" top="5.0" />
                                        </HBox.margin></Label>
@@ -300,7 +300,7 @@
                               </HBox>
                               <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Button fx:id="setOriginal" mnemonicParsing="false" onAction="#setFilteredAsOriginal" style="-fx-background-color: #1a75ff;" text="Set original" textFill="#c5c5c5">
+                                    <Button fx:id="setOriginal" mnemonicParsing="false" onAction="#setFilteredAsOriginal" style="-fx-background-color: #1a75ff;" text="Set as original" textFill="#c5c5c5">
                                        <HBox.margin>
                                           <Insets right="20.0" />
                                        </HBox.margin>

@@ -113,6 +113,16 @@ public class WindowController {
     @FXML
     public void initialize(){
 
+        // Tooltips
+        newFilterSizeTxt.setTooltip(new Tooltip("Set 3, 5 or 7"));
+        redSlider.setTooltip(new Tooltip("Set value to add"));
+        greenSlider.setTooltip(new Tooltip("Set value to add"));
+        blueSlider.setTooltip(new Tooltip("Set value to add"));
+        parallelismLevelTxt.setTooltip(new Tooltip("Set pool. Default the number of processors"));
+        thresholdLabel.setTooltip(new Tooltip("Only under this threshold tasks are processed sequentially"));
+        filterChoiceBox.setTooltip(new Tooltip("Select filter"));
+
+        //Init
         loadBtn.setText("Load");
         newFilterSizeTxt.setText("3");
         filterChoiceBox.getItems().setAll("Custom","Negative","Sepia","Matrix");
@@ -261,6 +271,8 @@ public class WindowController {
     private  void printNewImage(Image image){
         originalImage.setImage(image);
         filteredImage.setImage(image);
+        sizeLabel.setText("Size: " + (int) originalImage.getImage().getWidth() + "x" + (int) originalImage.getImage().getHeight() + "px");
+
     }
 
     @FXML
