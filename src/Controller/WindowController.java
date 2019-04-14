@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.FilterInterface.AbstractMultiPixelFilterModel.FilterImpl.CustomMatrixFilter;
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.NegativeFilter;
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.CustomFilter;
 import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.SepiaFilter;
@@ -108,7 +109,7 @@ public class WindowController {
 
         loadBtn.setText("Load");
         newFilterSizeTxt.setText("3");
-        filterChoiceBox.getItems().setAll("Custom","Negative","Sepia");
+        filterChoiceBox.getItems().setAll("Custom","Negative","Sepia","Matrix");
         filterChoiceBox.getSelectionModel().selectFirst();
         filterChoiceBox.setOnAction(this::toggleMatrixEnable);
         sizeLabel.setText("Size: " + (int) originalImage.getImage().getWidth() + "x" + (int) originalImage.getImage().getHeight() + "px");
@@ -257,9 +258,10 @@ public class WindowController {
             case "Sepia":
                 filter = new SepiaFilter();
                 break;
-//            case "STest":
-////                filter = new C();
-//                break;
+            case "Matrix":
+                int[][] tmp = {{2,2,2},{2,2,2},{2,2,2}};
+                filter = new CustomMatrixFilter(tmp);
+                break;
             case "Custom":
                 int[] addRgb = {(int)redSlider.getValue(), (int)greenSlider.getValue(), (int)blueSlider.getValue()};
                 filter = new CustomFilter(addRgb);
