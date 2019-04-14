@@ -1,82 +1,98 @@
 package Model.FilterInterface.AbstractMultiPixelFilterModel.FilterImpl;
 
 import Model.FilterInterface.AbstractMultiPixelFilterModel.MultiPixelFilter;
+import javafx.scene.image.PixelReader;
+
 import java.awt.image.BufferedImage;
 
 public class CustomMatrixFilter extends MultiPixelFilter {
 
     private int[][] filterMatrix;
-    private double rate = 0;
-    private BufferedImage image;
+    private double rate;
+    private int minValue;
+    private boolean isMinFilterValueNegative = true;
+    private PixelReader pixelReader;
 
-    public CustomMatrixFilter(int[][] filterMatrix) {
+    public CustomMatrixFilter(int[][] filterMatrix, PixelReader pixelReader) {
         this.filterMatrix = filterMatrix;
+        this.pixelReader = pixelReader;
 
+        int max = 0;
+        int min = 0;
         for(int i=0 ; i<filterMatrix.length ; i++){
             for(int j=0 ; j<filterMatrix.length ; j++){
-                if(this.rate<filterMatrix[i][j])
-                    this.rate = filterMatrix[i][j];
+                if(max<filterMatrix[i][j]){
+                    max = filterMatrix[i][j];
+                }else if(min>filterMatrix[i][j]){
+                    min = filterMatrix[i][j];
+                }
+
             }
         }
-        this.rate = 1/rate;
-        System.out.println("Rate is: " + rate);
-    }
 
-    public BufferedImage getImage() {
-        return image;
-    }
-
-    public void setImage(BufferedImage image) {
-        this.image = image;
+        if(min>=0){
+            isMinFilterValueNegative=false;
+            this.minValue = min;
+        }else{
+            this.minValue = Math.abs(min);
+        }
+        this.rate = (double) 1/(max-min);
     }
 
     @Override
     public void runFiltering(BufferedImage image, int startX, int endX, int startY, int endY) {
 
-        this.setImage(image);
-
         int[] argb;
-        for(int i = startX ; i < endX ; i++){
-            for(int j = startY ; j < endY ; j++){
-                argb = calculateNewRgb(i,j);
-                System.out.println(argb.length);
-                setMyRGB(image, i, j, argb);
+        for(int x = startX ; x < endX ; x++){
+            for(int y = startY ; y < endY ; y++){
+                argb = calculateNewRgb(image, x,y);
+                setMyRGB(image, x, y, argb);
             }
         }
     }
 
-    int[] calculateNewRgb(int x, int y) {
-        BufferedImage image = this.getImage();
+    int[] calculateNewRgb(BufferedImage image, int x, int y) {
+
         int filterSize = filterMatrix.length;
 
-        long[] argbs = {0,0,0,0};
+        double[] argbs = {0,0,0,0};
 
         int startFilterX = x - (filterSize - 1) / 2;
         int startFilterY = y - (filterSize - 1) / 2;
 
-        for (int i = startFilterX; i < filterMatrix.length; i++) {
+        int indX=0;
+        for (int i = startFilterX; i < (startFilterX+filterMatrix.length); i++) {
 
-            if(i<0)
+            if(i<0 || i>=image.getWidth()){
                 continue;
+            }
 
-            for (int j = startFilterY; j < filterMatrix.length; j++) {
+            int indY = 0;
+            for (int j = startFilterY; j < (startFilterY+filterMatrix.length); j++) {
 
-                if(j<0)
+                if(j<0 || j>=image.getHeight())
                     continue;
 
-                int[] tmp = super.getMyRGB(image, i, j);
-                for (int k=0 ; k<argbs.length ; k++){
-                    argbs[k] += (tmp[k]*filterMatrix[i][j]);
-                }
-            }
-            System.out.println(argbs[1] + " " + argbs[3]);
-        }
+                int p = this.pixelReader.getArgb(i, j);
+                int[] argb = new int[4];
+                argb[0] = (p >> 24) & 0xff;
+                argb[1] = (p >> 16) & 0xff;
+                argb[2] = (p >> 8) & 0xff;
+                argb[3] = p & 0xff;
 
+                for (int k=0 ; k<argbs.length ; k++){
+
+                    int tmp = isMinFilterValueNegative ? argb[k]*filterMatrix[indX][indY]+255*minValue : argb[k]*filterMatrix[indX][indY]-255*minValue;
+                    argbs[k] = argbs[k] + (tmp*rate);
+                }
+                indY++;
+            }
+            indX++;
+        }
         int[] newArgb = new int[4];
         for(int i=0 ; i<argbs.length ; i++){
-            newArgb[i] = (int)((double) argbs[i] * rate);
+            newArgb[i] = (int) argbs[i]/(filterSize*filterSize);
         }
-
 
         return newArgb;
     }

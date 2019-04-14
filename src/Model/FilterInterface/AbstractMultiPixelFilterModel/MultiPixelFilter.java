@@ -8,11 +8,6 @@ public abstract class MultiPixelFilter implements Filter {
 
     private BufferedImage image;
 
-//    public int[][][] getMyRGBs(BufferedImage image, int x, int y, int[][] filter) {
-
-//        return argbs;
-//    }
-
     @Override
     public int[] getMyRGB(BufferedImage image, int x, int y) {
         int p = image.getRGB(x, y);

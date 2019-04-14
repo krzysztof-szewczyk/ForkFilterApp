@@ -251,6 +251,9 @@ public class WindowController {
         BufferedImage bi = SwingFXUtils.fromFXImage(originalImage.getImage(),null);
         String filterName = filterChoiceBox.getSelectionModel().getSelectedItem();
         Filter filter;
+        long ll = 111;
+        double dd = 1.23;
+        System.out.println(ll*dd);
         switch (filterName){
             case "Negative":
                 filter = new NegativeFilter();
@@ -259,8 +262,8 @@ public class WindowController {
                 filter = new SepiaFilter();
                 break;
             case "Matrix":
-                int[][] tmp = {{2,2,2},{2,2,2},{2,2,2}};
-                filter = new CustomMatrixFilter(tmp);
+                int[][] tmp = {{1, 0, -1},{-0, 0, 0},{-1, 0, 1}};
+                filter = new CustomMatrixFilter(tmp, originalImage.getImage().getPixelReader());
                 break;
             case "Custom":
                 int[] addRgb = {(int)redSlider.getValue(), (int)greenSlider.getValue(), (int)blueSlider.getValue()};
