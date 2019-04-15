@@ -1,17 +1,16 @@
-package Controller;
+package Model.Filters;
 
-import Model.FilterInterface.Filter;
-import Model.GuiModel.MyProperties;
+import Model.Filters.FilterInterface.Filter;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.RecursiveAction;
 
-public class FilterManager extends RecursiveAction {
+final public class FilterManager extends RecursiveAction {
     private int threshold;
     private int startX, endX, startY, endY;
     private BufferedImage image;
     private Filter filter;
-    static int i=0;
+    public static int i=0;
 
     public FilterManager(BufferedImage image, Filter filter, int startX, int endX, int startY, int endY, int threshold) {
         this.image = image;

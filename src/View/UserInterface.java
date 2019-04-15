@@ -17,14 +17,14 @@ public class UserInterface extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("FXML/Window.fxml"));
+        final FXMLLoader loader = new FXMLLoader(this.getClass().getResource("FXML/Window.fxml"));
         AnchorPane anchorPane = null;
         try {
             anchorPane = loader.load();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,"Cannot run GUI");
         }
-        Scene scene = new Scene(anchorPane);
+        final Scene scene = new Scene(anchorPane);
         primaryStage.setScene(scene);
         primaryStage.setTitle("FilterRecur app");
         primaryStage.show();

@@ -1,25 +1,29 @@
 package Controller;
 
-import Model.FilterInterface.AbstractMultiPixelFilterModel.FilterImpl.CustomMatrixFilter;
-import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.NegativeFilter;
-import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.CustomFilter;
-import Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl.SepiaFilter;
-import Model.FilterInterface.Filter;
-import Model.GuiModel.MyProperties;
-import Model.Validator.IntegerValidator;
+import Model.Filters.FiltersImpl.CustomMatrixFilter;
+import Model.Filters.FiltersImpl.NegativeFilter;
+import Model.Filters.FiltersImpl.CustomFilter;
+import Model.Filters.FiltersImpl.SepiaFilter;
+import Model.Filters.FilterInterface.Filter;
+import Model.Filters.FilterManager;
+import Model.Properties.MyProperties;
+import Model.Validators.IntegerValidator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.util.converter.IntegerStringConverter;
+import javafx.util.converter.NumberStringConverter;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -72,6 +76,9 @@ public class WindowController {
     private HBox RGBBox;
 
     @FXML
+    private Pane originalImagePane;
+
+    @FXML
     private Slider redSlider;
 
     @FXML
@@ -89,17 +96,21 @@ public class WindowController {
     @FXML
     private Label blueLabel;
 
+    @FXML
+    private Slider contrastSlider;
+
+    @FXML
+    private Label contrastLabel;
+
     private List filterValueList = new ArrayList<TextField>();
 
-    private MyProperties redSlidersPropertiesObject = new MyProperties();
-
-    private MyProperties greenSlidersPropertiesObject = new MyProperties();
-
-    private MyProperties blueSlidersPropertiesObject = new MyProperties();
+    private MyProperties myProperty = new MyProperties();
 
     private ForkJoinPool forkJoinPool = new ForkJoinPool();
 
-    public ForkJoinPool getForkJoinPool() {
+    private ColorAdjust ca = new ColorAdjust();
+
+    private ForkJoinPool getForkJoinPool() {
         return forkJoinPool;
     }
 
@@ -122,7 +133,7 @@ public class WindowController {
         //Init
         loadBtn.setText("Load");
         newFilterSizeTxt.setText("3");
-        filterChoiceBox.getItems().setAll("Custom","Negative","Sepia","Matrix");
+        filterChoiceBox.getItems().setAll("Custom Pixel", "Custom Matrix", "Negative","Sepia");
         filterChoiceBox.getSelectionModel().selectFirst();
         filterChoiceBox.setOnAction(this::toggleMatrixEnable);
         sizeLabel.setText("Size: " + (int) originalImage.getImage().getWidth() + "x" + (int) originalImage.getImage().getHeight() + "px");
@@ -138,42 +149,55 @@ public class WindowController {
                 new TextFormatter<>(new IntegerStringConverter(),
                         forkJoinPool.getParallelism(),
                         new IntegerValidator("-?^([1-9]|[1-9][0-9]*)?")));
+        // Set brightness and contrast
+        contrastSlider.valueProperty().bindBidirectional(ca.contrastProperty());
+        filteredImage.setEffect(ca);
+        contrastLabel.textProperty().bindBidirectional(contrastSlider.valueProperty(), new NumberStringConverter());
 
-        /**
+        /*
          *  Binding sliders to Doubleproperties binded to IntegerProperty binded to RgbLabels
         */
         // Red binding
-        redSlider.valueProperty().bindBidirectional(redSlidersPropertiesObject.stringToDoubleProperty());
-        redSlidersPropertiesObject.stringToDoubleProperty().bindBidirectional(redSlidersPropertiesObject.doubleToIntProperty());
-        redLabel.textProperty().bind(redSlidersPropertiesObject.doubleToIntProperty().asString());
+        redSlider.valueProperty().bindBidirectional(myProperty.stringToDoubleProperty());
+        myProperty.stringToDoubleProperty().bindBidirectional(myProperty.doubleToIntProperty());
+        redLabel.textProperty().bind(myProperty.doubleToIntProperty().asString());
         // Green binding
-        greenSlider.valueProperty().bindBidirectional(greenSlidersPropertiesObject.stringToDoubleProperty());
-        greenSlidersPropertiesObject.stringToDoubleProperty().bindBidirectional(greenSlidersPropertiesObject.doubleToIntProperty());
-        greenLabel.textProperty().bind(greenSlidersPropertiesObject.doubleToIntProperty().asString());
+        greenSlider.valueProperty().bindBidirectional(myProperty.stringToDoubleGreenProperty());
+        myProperty.stringToDoubleGreenProperty().bindBidirectional(myProperty.doubleToIntGreenProperty());
+        greenLabel.textProperty().bind(myProperty.doubleToIntGreenProperty().asString());
         // Blue binding
-        blueSlider.valueProperty().bindBidirectional(blueSlidersPropertiesObject.stringToDoubleProperty());
-        blueSlidersPropertiesObject.stringToDoubleProperty().bindBidirectional(blueSlidersPropertiesObject.doubleToIntProperty());
-        blueLabel.textProperty().bind(blueSlidersPropertiesObject.doubleToIntProperty().asString());
+        blueSlider.valueProperty().bindBidirectional(myProperty.stringToDoubleBlueProperty());
+        myProperty.stringToDoubleBlueProperty().bindBidirectional(myProperty.doubleToIntBlueProperty());
+        blueLabel.textProperty().bind(myProperty.doubleToIntBlueProperty().asString());
         // Align images to each other
         filteredImage.fitWidthProperty().bindBidirectional(originalImage.fitWidthProperty());
-
+        filteredImage.fitHeightProperty().bindBidirectional(originalImage.fitHeightProperty());
+        // Fit ImageViews to parent panes
+        originalImage.fitWidthProperty().bind(originalImagePane.widthProperty());
+        originalImage.fitHeightProperty().bind(originalImagePane.heightProperty());
+        // Init matrix values
         changeFilterMatrix();
     }
 
     @FXML
-    public void setFilteredAsOriginal(){
+    private void setFilteredAsOriginal(){
         printNewImage(filteredImage.getImage());
     }
 
     @FXML
-    public void resetSliders(){
+    private void resetSliders(){
         redSlider.setValue(0);
         greenSlider.setValue(0);
         blueSlider.setValue(0);
     }
 
     @FXML
-    public void changeFilterMatrix(){
+    private void resetContrast(){
+        contrastSlider.setValue(0.0);
+    }
+
+    @FXML
+    private void changeFilterMatrix(){
         boolean notNum = false;
         String str = newFilterSizeTxt.getText();
         if(str.equals("") || str.isEmpty()){
@@ -181,13 +205,12 @@ public class WindowController {
         }
 
         if(!notNum){
-
             // clear old fields
             filterValueList.clear();
 
-            int n = Integer.parseInt(newFilterSizeTxt.getText());
-            int txtSize = 25;
-            int margin = 2;
+            final int n = Integer.parseInt(newFilterSizeTxt.getText());
+            final int txtSize = 25;
+            final int margin = 2;
 
             matrixGridPane.getChildren().clear();
 
@@ -200,7 +223,7 @@ public class WindowController {
             int index = 0;
             for(int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    TextField tf = new TextField();
+                    final TextField tf = new TextField();
                     tf.setPrefSize(txtSize, txtSize);
                     tf.setMaxSize(txtSize, txtSize);
                     tf.setMinSize(txtSize, txtSize);
@@ -220,11 +243,11 @@ public class WindowController {
 
     @FXML
     private void toggleMatrixEnable(ActionEvent actionEvent){
-        if(filterChoiceBox.getSelectionModel().getSelectedIndex() == 0){
+        if(filterChoiceBox.getSelectionModel().getSelectedItem().equals("Custom Pixel")){
             RGBBox.setDisable(false);
             matrixGridPane.setDisable(true);
             newFilterSizeTxt.setDisable(true);
-        }else if(filterChoiceBox.getSelectionModel().getSelectedIndex() == 3){
+        }else if(filterChoiceBox.getSelectionModel().getSelectedItem().equals("Custom Matrix")){
             matrixGridPane.setDisable(false);
             newFilterSizeTxt.setDisable(false);
             RGBBox.setDisable(true);
@@ -237,8 +260,8 @@ public class WindowController {
     }
 
     @FXML
-    public void openFileChooser(){
-        FileChooser fc = new FileChooser();
+    private void openFileChooser(){
+        final FileChooser fc = new FileChooser();
 
         fc.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("*", "*.jpg", "*.png"),
@@ -246,7 +269,7 @@ public class WindowController {
                 new FileChooser.ExtensionFilter(".png", "*.png")
         );
 
-        File startDirectory = new File(System.getProperty("user.home") + "/Desktop");
+        final File startDirectory = new File(System.getProperty("user.home") + "/Desktop");
 
         if(startDirectory.exists())
             fc.setInitialDirectory(startDirectory);
@@ -262,7 +285,7 @@ public class WindowController {
     @FXML
     private void searchImageByPath(){
         try {
-            Image image = new Image(new FileInputStream(loadTxt.getText()));
+            final Image image = new Image(new FileInputStream(loadTxt.getText()));
             printNewImage(image);
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(null, "Could not find image");
@@ -277,7 +300,7 @@ public class WindowController {
     }
 
     @FXML
-    public void filter(){
+    private void filter(){
 
         // counter of recursive actions (tasks)
         FilterManager.i = 0;
@@ -289,8 +312,8 @@ public class WindowController {
         }
 
 
-        BufferedImage bi = SwingFXUtils.fromFXImage(originalImage.getImage(),null);
-        String filterName = filterChoiceBox.getSelectionModel().getSelectedItem();
+        final BufferedImage bi = SwingFXUtils.fromFXImage(originalImage.getImage(),null);
+        final String filterName = filterChoiceBox.getSelectionModel().getSelectedItem();
         Filter filter = null;
 
         switch (filterName){
@@ -300,9 +323,9 @@ public class WindowController {
             case "Sepia":
                 filter = new SepiaFilter();
                 break;
-            case "Matrix":
-                int size = Integer.parseInt(newFilterSizeTxt.getText());
-                int[][] filterValues = new int[size][size];
+            case "Custom Matrix":
+                final int size = Integer.parseInt(newFilterSizeTxt.getText());
+                final int[][] filterValues = new int[size][size];
                 int index = 0;
                 for(int i = 0; i<size; i++){
                     for(int j = 0; j<size; j++){
@@ -312,22 +335,22 @@ public class WindowController {
                 }
                 filter = new CustomMatrixFilter(filterValues, originalImage.getImage().getPixelReader());
                 break;
-            case "Custom":
-                int[] addRgb = {(int)redSlider.getValue(), (int)greenSlider.getValue(), (int)blueSlider.getValue()};
+            case "Custom Pixel":
+                final int[] addRgb = {(int)redSlider.getValue(), (int)greenSlider.getValue(), (int)blueSlider.getValue()};
                 filter = new CustomFilter(addRgb);
                 break;
             default:
                 JOptionPane.showMessageDialog(null, "Select correct filter");
         }
 
-        if(!filter.equals(null)){
+        if(filter != null){
 
-            long beginT = System.nanoTime();
-            FilterManager fm = new FilterManager(bi, filter, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdTxt.getText()));
+            final long beginT = System.nanoTime();
+            final FilterManager fm = new FilterManager(bi, filter, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdTxt.getText()));
             fjp.invoke(fm);
             filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
             tasksLabel.setText("Tasks: " + FilterManager.i);
-            long endT = System.nanoTime();
+            final long endT = System.nanoTime();
             processingTimeLabel.setText("Processing time: "+(endT-beginT)/1000000+"ms");
         }
     }

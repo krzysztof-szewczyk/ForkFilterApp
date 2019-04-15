@@ -1,10 +1,10 @@
-package Model.FilterInterface.AbstractSinglePixelFilterModel.FilterImpl;
+package Model.Filters.FiltersImpl;
 
-import Model.FilterInterface.AbstractSinglePixelFilterModel.SinglePixelFilter;
+import Model.Filters.AbstractFiltres.SinglePixelFilter;
 
 import java.awt.image.BufferedImage;
 
-public class CustomFilter extends SinglePixelFilter {
+final public class CustomFilter extends SinglePixelFilter {
 
     private int[] addRgb;
 
@@ -19,11 +19,11 @@ public class CustomFilter extends SinglePixelFilter {
             for (int x = startX; x < endX; x++) {
 
                 //get my RGB values
-                int[] argb = super.getMyRGB(image, x, y);
+                final int[] argb = super.getMyRGB(image, x, y);
 
                 // negative filter
                 for(int i=1 ; i<argb.length ; i++){
-                    int newValue = argb[i] + addRgb[i-1];
+                    final int newValue = argb[i] + addRgb[i-1];
                     if(newValue>255){
                         argb[i] = 255;
                     }else if(newValue<0){

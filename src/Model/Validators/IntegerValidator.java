@@ -1,10 +1,10 @@
-package Model.Validator;
+package Model.Validators;
 
 import javafx.scene.control.TextFormatter;
 
 import java.util.function.UnaryOperator;
 
-public class IntegerValidator implements UnaryOperator<TextFormatter.Change> {
+final public class IntegerValidator implements UnaryOperator<TextFormatter.Change> {
 
     private String regexp;
 

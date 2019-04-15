@@ -1,13 +1,11 @@
-package Model.FilterInterface.AbstractMultiPixelFilterModel.FilterImpl;
+package Model.Filters.FiltersImpl;
 
-import Model.FilterInterface.AbstractMultiPixelFilterModel.MultiPixelFilter;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
+import Model.Filters.AbstractFiltres.MultiPixelFilter;
 import javafx.scene.image.PixelReader;
 
 import java.awt.image.BufferedImage;
 
-public class CustomMatrixFilter extends MultiPixelFilter {
+final public class CustomMatrixFilter extends MultiPixelFilter {
 
     private int[][] filterMatrix;
     private double rate;
@@ -54,12 +52,12 @@ public class CustomMatrixFilter extends MultiPixelFilter {
 
     int[] calculateNewRgb(BufferedImage image, int x, int y) {
 
-        int filterSize = filterMatrix.length;
+        final int filterSize = filterMatrix.length;
 
-        double[] argbs = {0,0,0,0};
+        final double[] argbs = {0,0,0,0};
 
-        int startFilterX = x - (filterSize - 1) / 2;
-        int startFilterY = y - (filterSize - 1) / 2;
+        final int startFilterX = x - (filterSize - 1) / 2;
+        final int startFilterY = y - (filterSize - 1) / 2;
 
         int indX=0;
         for (int i = startFilterX; i < (startFilterX+filterMatrix.length); i++) {
@@ -75,8 +73,8 @@ public class CustomMatrixFilter extends MultiPixelFilter {
                 if(j<0 || j>=image.getHeight())
                     continue;
 
-                int p = this.pixelReader.getArgb(i, j);
-                int[] argb = new int[4];
+                final int p = this.pixelReader.getArgb(i, j);
+                final int[] argb = new int[4];
                 argb[0] = (p >> 24) & 0xff;
                 argb[1] = (p >> 16) & 0xff;
                 argb[2] = (p >> 8) & 0xff;
@@ -84,7 +82,7 @@ public class CustomMatrixFilter extends MultiPixelFilter {
 
                 for (int k=0 ; k<argbs.length ; k++){
 
-                    int tmp = isMinFilterValueNegative ? argb[k]*filterMatrix[indX][indY]+255*minValue : argb[k]*filterMatrix[indX][indY]-255*minValue;
+                    final int tmp = isMinFilterValueNegative ? argb[k]*filterMatrix[indX][indY]+255*minValue : argb[k]*filterMatrix[indX][indY]-255*minValue;
                     argbs[k] = argbs[k] + (tmp*rate);
                 }
                 indY++;
