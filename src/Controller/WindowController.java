@@ -17,6 +17,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -36,8 +37,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ForkJoinPool;
 
 public class WindowController {
@@ -126,7 +129,7 @@ public class WindowController {
 
     @FXML
     public void initialize(){
-
+        printNewImage(new Image("file:..\\..\\resources\\eif.JPG"));
         // Tooltips
         newFilterSizeTxt.setTooltip(new Tooltip("Set 3, 5 or 7"));
         redSlider.setTooltip(new Tooltip("Set value to add"));
@@ -154,7 +157,7 @@ public class WindowController {
                         new IntegerValidator("-?^([1-9]|[1-2][0-9]{0,4}|3[0-9]{0,3}|3[0-1][0-9]{0,3}|32[0-6][0-9]{0,2}|327[0-5][0-9]|3276[0-7])?")));
         thresholdTxt.setTextFormatter(
                 new TextFormatter<>(new IntegerStringConverter(),
-                        forkJoinPool.getParallelism(),
+                        100,
                         new IntegerValidator("-?^([1-9]|[1-9][0-9]*)?")));
         // Set brightness and contrast
         contrastSlider.valueProperty().bindBidirectional(ca.contrastProperty());
@@ -163,7 +166,7 @@ public class WindowController {
 
         /*
          *  Binding sliders to Doubleproperties binded to IntegerProperty binded to RgbLabels
-        */
+         */
         // Red binding
         redSlider.valueProperty().bindBidirectional(myProperty.stringToDoubleProperty());
         myProperty.stringToDoubleProperty().bindBidirectional(myProperty.doubleToIntProperty());
@@ -182,10 +185,6 @@ public class WindowController {
         // Fit ImageViews to parent panes
         originalImage.fitWidthProperty().bind(originalImagePane.widthProperty());
         originalImage.fitHeightProperty().bind(originalImagePane.heightProperty());
-        // Threshold to tasks count
-        thresholdTxt.textProperty().bindBidirectional(myProperty.thresholdToTasksProperty(), new NumberStringConverter());
-
-        tasksLabel.textProperty().bind((new When(myProperty.thresholdToTasksProperty().isNotEqualTo(0)).then((originalImage.getImage().widthProperty().divide(myProperty.thresholdToTasksProperty()).asString("Tasks: %.0f"))).otherwise("1")));
         // Init matrix values
         changeFilterMatrix();
     }
@@ -360,6 +359,7 @@ public class WindowController {
             final FilterManager fm = new FilterManager(bi, filter, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdTxt.getText()));
             fjp.invoke(fm);
             filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
+            tasksLabel.setText("Tasks: " + FilterManager.i);
             final long endT = System.nanoTime();
             processingTimeLabel.setText("Processing time: "+(endT-beginT)/1000000+"ms");
         }

@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class UserInterface extends Application {
         final Scene scene = new Scene(anchorPane);
         primaryStage.setScene(scene);
         primaryStage.setTitle("ForkFilterApp");
+        primaryStage.initStyle(StageStyle.DECORATED);
         primaryStage.show();
     }
 }
