@@ -280,13 +280,16 @@
                                  <padding>
                                     <Insets left="10.0" />
                                  </padding></Label>
-                              <Label fx:id="tasksLabel" text="Tasks: -" textFill="#435761">
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" top="5.0" />
-                                 </VBox.margin>
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding></Label>
+                              <HBox prefHeight="2.0" prefWidth="182.0">
+                                 <children>
+                                    <Label text="Tasks: " textFill="#435761">
+                                       <padding>
+                                          <Insets left="10.0" />
+                                       </padding>
+                                    </Label>
+                                    <Label fx:id="tasksLabel" text="-" />
+                                 </children>
+                              </HBox>
                               <Label fx:id="sizeLabel" text="Size: -" textFill="#435761">
                                  <padding>
                                     <Insets left="10.0" />
@@ -320,7 +323,7 @@
                                  <children>
                                     <ImageView fx:id="originalImage" fitHeight="373.0" fitWidth="218.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="file:/C:/Users/Ozii/Desktop/projects/ImageFilteringFJ/resources/strawberry.jpg" />
+                                          <Image url="file:/C:/Users/krzys/IdeaProjects/ImageFilteringFJ/resources/eif.JPG" />
                                        </image>
                                     </ImageView>
                                  </children>
@@ -394,7 +397,7 @@
                                  <children>
                                     <ImageView fx:id="filteredImage" fitHeight="374.0" fitWidth="225.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="file:/C:/Users/Ozii/Desktop/projects/ImageFilteringFJ/resources/strawberry.jpg" />
+                                          <Image url="file:/C:/Users/krzys/IdeaProjects/ImageFilteringFJ/resources/eif.JPG" />
                                        </image>
                                     </ImageView>
                                  </children>

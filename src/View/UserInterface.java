@@ -26,7 +26,7 @@ public class UserInterface extends Application {
         }
         final Scene scene = new Scene(anchorPane);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("FilterRecur app");
+        primaryStage.setTitle("ForkFilterApp");
         primaryStage.show();
     }
 }

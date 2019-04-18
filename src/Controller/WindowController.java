@@ -8,6 +8,12 @@ import Model.Filters.FilterInterface.Filter;
 import Model.Filters.FilterManager;
 import Model.Properties.MyProperties;
 import Model.Validators.IntegerValidator;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.binding.NumberBinding;
+import javafx.beans.binding.When;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -131,6 +137,7 @@ public class WindowController {
         filterChoiceBox.setTooltip(new Tooltip("Select filter"));
 
         //Init
+//        printNewImage(new Image("..\\..\\resources\\eif.JPG"));
         loadBtn.setText("Load");
         newFilterSizeTxt.setText("3");
         filterChoiceBox.getItems().setAll("Custom Pixel", "Custom Matrix", "Negative","Sepia");
@@ -175,6 +182,10 @@ public class WindowController {
         // Fit ImageViews to parent panes
         originalImage.fitWidthProperty().bind(originalImagePane.widthProperty());
         originalImage.fitHeightProperty().bind(originalImagePane.heightProperty());
+        // Threshold to tasks count
+        thresholdTxt.textProperty().bindBidirectional(myProperty.thresholdToTasksProperty(), new NumberStringConverter());
+
+        tasksLabel.textProperty().bind((new When(myProperty.thresholdToTasksProperty().isNotEqualTo(0)).then((originalImage.getImage().widthProperty().divide(myProperty.thresholdToTasksProperty()).asString("Tasks: %.0f"))).otherwise("1")));
         // Init matrix values
         changeFilterMatrix();
     }
@@ -349,7 +360,6 @@ public class WindowController {
             final FilterManager fm = new FilterManager(bi, filter, 0, (int)originalImage.getImage().getWidth(), 0, (int)originalImage.getImage().getHeight(), Integer.parseInt(thresholdTxt.getText()));
             fjp.invoke(fm);
             filteredImage.setImage(SwingFXUtils.toFXImage(bi, null));
-            tasksLabel.setText("Tasks: " + FilterManager.i);
             final long endT = System.nanoTime();
             processingTimeLabel.setText("Processing time: "+(endT-beginT)/1000000+"ms");
         }
