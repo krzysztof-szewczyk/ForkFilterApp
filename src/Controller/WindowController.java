@@ -129,6 +129,7 @@ public class WindowController {
 
     @FXML
     public void initialize(){
+        // Init image loading
         printNewImage(new Image("file:..\\..\\resources\\eif.JPG"));
         // Tooltips
         newFilterSizeTxt.setTooltip(new Tooltip("Set 3, 5 or 7"));
@@ -138,9 +139,7 @@ public class WindowController {
         parallelismLevelTxt.setTooltip(new Tooltip("Set pool. Default the number of processors"));
         thresholdTxt.setTooltip(new Tooltip("Only under this threshold tasks are processed sequentially"));
         filterChoiceBox.setTooltip(new Tooltip("Select filter"));
-
         //Init
-//        printNewImage(new Image("..\\..\\resources\\eif.JPG"));
         loadBtn.setText("Load");
         newFilterSizeTxt.setText("3");
         filterChoiceBox.getItems().setAll("Custom Pixel", "Custom Matrix", "Negative","Sepia");

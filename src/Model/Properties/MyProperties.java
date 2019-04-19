@@ -33,23 +33,4 @@ final public class MyProperties {
     final public DoubleProperty stringToDoubleBlueProperty() {
         return stringToDoubleBlue;
     }
-
-    // TASKS
-    final private IntegerProperty thresholdToTasks = new SimpleIntegerProperty();
-    public IntegerProperty thresholdToTasksProperty() {
-        return thresholdToTasks;
-    }
-    final private IntegerProperty doubleToIntTasks = new SimpleIntegerProperty();
-
-    public int getDoubleToIntTasks() {
-        return doubleToIntTasks.get();
-    }
-
-    public IntegerProperty doubleToIntTasksProperty() {
-        return doubleToIntTasks;
-    }
-
-    public void setDoubleToIntTasks(int doubleToIntTasks) {
-        this.doubleToIntTasks.set(doubleToIntTasks);
-    }
 }

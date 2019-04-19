@@ -19,12 +19,12 @@ final public class CustomMatrixFilter extends MultiPixelFilter {
 
         int max = 0;
         int min = 0;
-        for(int i=0 ; i<filterMatrix.length ; i++){
-            for(int j=0 ; j<filterMatrix.length ; j++){
-                if(max<filterMatrix[i][j]){
-                    max = filterMatrix[i][j];
-                }else if(min>filterMatrix[i][j]){
-                    min = filterMatrix[i][j];
+        for (int[] filterVector : filterMatrix) {
+            for (int filterElement : filterVector) {
+                if (max < filterElement) {
+                    max = filterElement;
+                } else if (min > filterElement) {
+                    min = filterElement;
                 }
             }
         }
@@ -50,7 +50,7 @@ final public class CustomMatrixFilter extends MultiPixelFilter {
         }
     }
 
-    int[] calculateNewRgb(BufferedImage image, int x, int y) {
+    private int[] calculateNewRgb(BufferedImage image, int x, int y) {
 
         final int filterSize = filterMatrix.length;
 
@@ -73,12 +73,7 @@ final public class CustomMatrixFilter extends MultiPixelFilter {
                 if(j<0 || j>=image.getHeight())
                     continue;
 
-                final int p = this.pixelReader.getArgb(i, j);
-                final int[] argb = new int[4];
-                argb[0] = (p >> 24) & 0xff;
-                argb[1] = (p >> 16) & 0xff;
-                argb[2] = (p >> 8) & 0xff;
-                argb[3] = p & 0xff;
+                final int[] argb = super.getMyRGB(this.pixelReader, i, j);
 
                 for (int k=0 ; k<argbs.length ; k++){
 
