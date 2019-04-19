@@ -8,16 +8,9 @@ import Model.Filters.FilterInterface.Filter;
 import Model.Filters.FilterManager;
 import Model.Properties.MyProperties;
 import Model.Validators.IntegerValidator;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.IntegerBinding;
-import javafx.beans.binding.NumberBinding;
-import javafx.beans.binding.When;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -37,10 +30,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.concurrent.ForkJoinPool;
 
 public class WindowController {
@@ -111,26 +102,50 @@ public class WindowController {
     @FXML
     private Label contrastLabel;
 
+    /**
+     * ChoiceBox elements names
+     */
     private List filterValueList = new ArrayList<TextField>();
 
+    /**
+     * Properties dispatcher
+     */
     private MyProperties myProperty = new MyProperties();
 
+    /**
+     * Fork/Join pool. Default: processors count
+     */
     private ForkJoinPool forkJoinPool = new ForkJoinPool();
 
+    /**
+     * Filtered image contrast
+     */
     private ColorAdjust ca = new ColorAdjust();
 
+    /**
+     * Get forkJoinPool
+     * @return
+     */
     private ForkJoinPool getForkJoinPool() {
         return forkJoinPool;
     }
 
+    /**
+     * Set forkJoinPool
+     */
     public void setForkJoinPool() {
         this.forkJoinPool = new ForkJoinPool(Integer.parseInt(parallelismLevelTxt.getText()));
     }
 
+    /**
+     * Initialize start settings and data binding
+     */
     @FXML
     public void initialize(){
+
         // Init image loading
         printNewImage(new Image("file:..\\..\\resources\\eif.JPG"));
+
         // Tooltips
         newFilterSizeTxt.setTooltip(new Tooltip("Set 3, 5 or 7"));
         redSlider.setTooltip(new Tooltip("Set value to add"));
@@ -139,60 +154,70 @@ public class WindowController {
         parallelismLevelTxt.setTooltip(new Tooltip("Set pool. Default the number of processors"));
         thresholdTxt.setTooltip(new Tooltip("Only under this threshold tasks are processed sequentially"));
         filterChoiceBox.setTooltip(new Tooltip("Select filter"));
-        //Init
+
+        // Set components data
         loadBtn.setText("Load");
         newFilterSizeTxt.setText("3");
         filterChoiceBox.getItems().setAll("Custom Pixel", "Custom Matrix", "Negative","Sepia");
         filterChoiceBox.getSelectionModel().selectFirst();
         filterChoiceBox.setOnAction(this::toggleMatrixEnable);
         sizeLabel.setText("Size: " + (int) originalImage.getImage().getWidth() + "x" + (int) originalImage.getImage().getHeight() + "px");
-        // Set filter size text field validator
+
+        // Set filter size text field validator. Only: 1, 3, 5 or 7
         newFilterSizeTxt.setTextFormatter(
                 new TextFormatter<>(new IntegerStringConverter(), 3, new IntegerValidator("-?([1|3|5|7])?")));
-        // Set parallelism level text field validator
+        // Set parallelism level text field validator. Only: 1-32767
         parallelismLevelTxt.setTextFormatter(
                 new TextFormatter<>(new IntegerStringConverter(),
                         forkJoinPool.getParallelism(),
                         new IntegerValidator("-?^([1-9]|[1-2][0-9]{0,4}|3[0-9]{0,3}|3[0-1][0-9]{0,3}|32[0-6][0-9]{0,2}|327[0-5][0-9]|3276[0-7])?")));
+        // Set threshold text field validator. Only: 1-inf
         thresholdTxt.setTextFormatter(
                 new TextFormatter<>(new IntegerStringConverter(),
                         100,
                         new IntegerValidator("-?^([1-9]|[1-9][0-9]*)?")));
-        // Set brightness and contrast
-        contrastSlider.valueProperty().bindBidirectional(ca.contrastProperty());
-        filteredImage.setEffect(ca);
-        contrastLabel.textProperty().bindBidirectional(contrastSlider.valueProperty(), new NumberStringConverter());
 
         /*
          *  Binding sliders to Doubleproperties binded to IntegerProperty binded to RgbLabels
          */
-        // Red binding
+        // Red slider(double)-label(int) binding
         redSlider.valueProperty().bindBidirectional(myProperty.stringToDoubleProperty());
         myProperty.stringToDoubleProperty().bindBidirectional(myProperty.doubleToIntProperty());
         redLabel.textProperty().bind(myProperty.doubleToIntProperty().asString());
-        // Green binding
+        // Green slider(double)-label(int) binding
         greenSlider.valueProperty().bindBidirectional(myProperty.stringToDoubleGreenProperty());
         myProperty.stringToDoubleGreenProperty().bindBidirectional(myProperty.doubleToIntGreenProperty());
         greenLabel.textProperty().bind(myProperty.doubleToIntGreenProperty().asString());
-        // Blue binding
+        // Blue slider(double)-label(int) binding
         blueSlider.valueProperty().bindBidirectional(myProperty.stringToDoubleBlueProperty());
         myProperty.stringToDoubleBlueProperty().bindBidirectional(myProperty.doubleToIntBlueProperty());
         blueLabel.textProperty().bind(myProperty.doubleToIntBlueProperty().asString());
-        // Align images to each other
+        // Contrast slider(double)-label(int) binding
+        contrastSlider.valueProperty().bindBidirectional(ca.contrastProperty());
+        filteredImage.setEffect(ca);
+        contrastLabel.textProperty().bindBidirectional(contrastSlider.valueProperty(), new NumberStringConverter());
+        // Align filteredImage to originalImage binding
         filteredImage.fitWidthProperty().bindBidirectional(originalImage.fitWidthProperty());
         filteredImage.fitHeightProperty().bindBidirectional(originalImage.fitHeightProperty());
-        // Fit ImageViews to parent panes
+        // Fit originalImage-originalImagePane binding
         originalImage.fitWidthProperty().bind(originalImagePane.widthProperty());
         originalImage.fitHeightProperty().bind(originalImagePane.heightProperty());
+
         // Init matrix values
         changeFilterMatrix();
     }
 
+    /**
+     * Set filtered image as original
+     */
     @FXML
     private void setFilteredAsOriginal(){
         printNewImage(filteredImage.getImage());
     }
 
+    /**
+     * Reset RGB sliders values
+     */
     @FXML
     private void resetSliders(){
         redSlider.setValue(0);
@@ -200,35 +225,41 @@ public class WindowController {
         blueSlider.setValue(0);
     }
 
+    /**
+     * Reset contrast slider value
+     */
     @FXML
     private void resetContrast(){
         contrastSlider.setValue(0.0);
     }
 
+    /**
+     * Change 'Custom Matrix Filter' size. Print square matrix of TextFields
+     */
     @FXML
     private void changeFilterMatrix(){
-        boolean notNum = false;
-        String str = newFilterSizeTxt.getText();
-        if(str.equals("") || str.isEmpty()){
-            notNum = true;
-        }
 
-        if(!notNum){
-            // clear old fields
+        String str = newFilterSizeTxt.getText();
+        // Checks if empty or null
+        if(!str.equals("") && !str.isEmpty()){
+            // Clear old values
             filterValueList.clear();
+            // Clear matrix's TextFields
+            matrixGridPane.getChildren().clear();
+            // Clear constraints
+            matrixGridPane.getColumnConstraints().clear();
+            matrixGridPane.getRowConstraints().clear();
 
             final int n = Integer.parseInt(newFilterSizeTxt.getText());
             final int txtSize = 25;
             final int margin = 2;
 
-            matrixGridPane.getChildren().clear();
-
+            // Set GridPane size
             matrixGridPane.setPrefSize(n*(txtSize+margin)+margin, n*(txtSize+margin)+margin);
             matrixGridPane.setMinSize(n*(txtSize+margin)+margin, n*(txtSize+margin)+margin);
             matrixGridPane.setMaxSize(n*(txtSize+margin)+margin, n*(txtSize+margin)+margin);
 
-            matrixGridPane.getColumnConstraints().clear();
-            matrixGridPane.getRowConstraints().clear();
+            // Fill GridPane with TextFields
             int index = 0;
             for(int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
@@ -250,6 +281,10 @@ public class WindowController {
         }
     }
 
+    /**
+     * Enables and disables conponents, when choice is changed
+     * @param actionEvent
+     */
     @FXML
     private void toggleMatrixEnable(ActionEvent actionEvent){
         if(filterChoiceBox.getSelectionModel().getSelectedItem().equals("Custom Pixel")){
@@ -267,6 +302,7 @@ public class WindowController {
             RGBBox.setDisable(true);
         }
     }
+
 
     @FXML
     private void openFileChooser(){
