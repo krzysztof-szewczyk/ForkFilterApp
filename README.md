@@ -1,6 +1,6 @@
 # ForkFilterApp
 
-Colaborated with @HannaManista<br><br>
+Collaborated with @HannaManista<br><br>
 
 <b>Java 8:</b>
 * ForkJoin framework
